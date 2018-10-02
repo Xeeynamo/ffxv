@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FFXV": {
+      "commandName": "Project",
+      "workingDirectory": "D:\\Hacking\\FFXV\\"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFXV.Models", "FFXV.Models\FFXV.Models.csproj", "{8C5DD5ED-4D27-40A8-B8C5-AB2ABEC1BB45}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFXV.Services", "FFXV.Services\FFXV.Services.csproj", "{1A521D84-D9F0-4947-B974-978FDB7646B5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFXV", "FFXV\FFXV.csproj", "{98CB1BB5-5215-4EC6-BAA8-6996477C9205}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xe", "Xe\Xe.csproj", "{9E23A63A-FFD6-4F6B-8254-09DA7C9569BB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{E393DC6B-1902-470D-B69A-7962D59011CC}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+		docs\sample-ctrl_cmn_text_icon.png = docs\sample-ctrl_cmn_text_icon.png
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8C5DD5ED-4D27-40A8-B8C5-AB2ABEC1BB45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C5DD5ED-4D27-40A8-B8C5-AB2ABEC1BB45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C5DD5ED-4D27-40A8-B8C5-AB2ABEC1BB45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C5DD5ED-4D27-40A8-B8C5-AB2ABEC1BB45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A521D84-D9F0-4947-B974-978FDB7646B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A521D84-D9F0-4947-B974-978FDB7646B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A521D84-D9F0-4947-B974-978FDB7646B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A521D84-D9F0-4947-B974-978FDB7646B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98CB1BB5-5215-4EC6-BAA8-6996477C9205}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98CB1BB5-5215-4EC6-BAA8-6996477C9205}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98CB1BB5-5215-4EC6-BAA8-6996477C9205}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98CB1BB5-5215-4EC6-BAA8-6996477C9205}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E23A63A-FFD6-4F6B-8254-09DA7C9569BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E23A63A-FFD6-4F6B-8254-09DA7C9569BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E23A63A-FFD6-4F6B-8254-09DA7C9569BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E23A63A-FFD6-4F6B-8254-09DA7C9569BB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {68E6A052-191B-402A-8054-0CE7B95576D6}
+	EndGlobalSection
+EndGlobal
