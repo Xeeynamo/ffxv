@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{E393DC6B-1
 		docs\sample-ctrl_cmn_text_icon.png = docs\sample-ctrl_cmn_text_icon.png
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFXV.Tools.Xmb", "FFXV.Tools.Xmb\FFXV.Tools.Xmb.csproj", "{08C3823F-5821-4238-B58C-397082CAF3BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{9E23A63A-FFD6-4F6B-8254-09DA7C9569BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E23A63A-FFD6-4F6B-8254-09DA7C9569BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E23A63A-FFD6-4F6B-8254-09DA7C9569BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08C3823F-5821-4238-B58C-397082CAF3BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08C3823F-5821-4238-B58C-397082CAF3BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08C3823F-5821-4238-B58C-397082CAF3BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08C3823F-5821-4238-B58C-397082CAF3BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

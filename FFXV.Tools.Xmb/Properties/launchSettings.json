@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "FFXV.Tools.Xmb": {
+      "commandName": "Project",
+      "commandLineArgs": "-x -i . -o . -v -d -r",
+      "workingDirectory": "D:\\Hacking\\FFXV\\ps4-duscae\\app0-unpack"
+    }
+  }
+}
