@@ -24,7 +24,6 @@ namespace FFXV.Tools.XmbTool
 
 
 		[Option("-x|--export", "Specify if the input is the one that has to be imported", CommandOptionType.NoValue, LongName = "--export")]
-		[Required]
 		public bool IsExport { get; }
 
 		[Option("-i|--input", "Input file or folder", CommandOptionType.SingleValue, LongName = "input")]
