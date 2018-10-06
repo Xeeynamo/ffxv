@@ -16,6 +16,7 @@ namespace FFXV.Services.Tests
 		[InlineData("layout_title_epd.exml")]
 		[InlineData("debug_wm.exml")]
 		[InlineData("commonai.exml")]
+		[InlineData("ocean.exml")]
 		public void XmbEqualityTest(string fileName)
 		{
 			var fileIn = File.OpenRead(fileName);
@@ -41,6 +42,7 @@ namespace FFXV.Services.Tests
 		[InlineData("layout_title_epd.exml")]
 		[InlineData("debug_wm.exml")]
 		[InlineData("commonai.exml")]
+		[InlineData("ocean.exml")]
 		public void XmbPerformanceTest(string fileName)
 		{
 			var fileIn = File.OpenRead(fileName);

@@ -10,9 +10,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{E393DC6B-1
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFXV.Tools.Xmb", "FFXV.Tools.Xmb\FFXV.Tools.Xmb.csproj", "{08C3823F-5821-4238-B58C-397082CAF3BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFXV.Tools.Xmb", "FFXV.Tools.Xmb\FFXV.Tools.Xmb.csproj", "{08C3823F-5821-4238-B58C-397082CAF3BF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFXV.Services.Tests", "FFXV.Services.Tests\FFXV.Services.Tests.csproj", "{2D337DA1-1253-4FE5-8681-88B237D7EE3B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Black", "Black\Black.csproj", "{EBD8B5C7-DC8C-45C5-AA4C-4916838DF2F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFXV.Models", "FFXV.Models\FFXV.Models.csproj", "{C359052B-2871-4C90-BD99-1E090C8EC1D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQEX.Ebony", "SQEX.Ebony\SQEX.Ebony.csproj", "{E72B3990-0FC5-4BF8-A5F1-895F1C04707A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +38,18 @@ Global
 		{2D337DA1-1253-4FE5-8681-88B237D7EE3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D337DA1-1253-4FE5-8681-88B237D7EE3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D337DA1-1253-4FE5-8681-88B237D7EE3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBD8B5C7-DC8C-45C5-AA4C-4916838DF2F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBD8B5C7-DC8C-45C5-AA4C-4916838DF2F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBD8B5C7-DC8C-45C5-AA4C-4916838DF2F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBD8B5C7-DC8C-45C5-AA4C-4916838DF2F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C359052B-2871-4C90-BD99-1E090C8EC1D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C359052B-2871-4C90-BD99-1E090C8EC1D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C359052B-2871-4C90-BD99-1E090C8EC1D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C359052B-2871-4C90-BD99-1E090C8EC1D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E72B3990-0FC5-4BF8-A5F1-895F1C04707A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E72B3990-0FC5-4BF8-A5F1-895F1C04707A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E72B3990-0FC5-4BF8-A5F1-895F1C04707A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E72B3990-0FC5-4BF8-A5F1-895F1C04707A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
