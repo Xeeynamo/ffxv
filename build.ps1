@@ -1,0 +1,1 @@
+dotnet publish -c Release ./FFXV.Tools.Xmb -o ../bin

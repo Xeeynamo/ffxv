@@ -1,15 +1,11 @@
-﻿using FFXV.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Xml.Linq;
 
 namespace FFXV.Services
 {
-	public class Xmb
+	public partial class Xmb
 	{
 		public enum ValueType
 		{
@@ -18,9 +14,10 @@ namespace FFXV.Services
 			Signed,
 			Unsigned,
 			Float,
-			Vector2,
-			Vector3,
-			Vector4,
+			Float2Alt,
+			Float2,
+			Float3,
+			Float4,
 		}
 
 		private class HeaderEntry
@@ -35,6 +32,12 @@ namespace FFXV.Services
 					Offset = reader.ReadInt32(),
 					Count = reader.ReadInt32(),
 				};
+			}
+
+			public void Write(BinaryWriter writer)
+			{
+				writer.Write(Offset);
+				writer.Write(Count);
 			}
 		}
 
@@ -69,9 +72,22 @@ namespace FFXV.Services
 					RootElementIndex = reader.ReadInt32(),
 				};
 			}
+
+			public void Write(BinaryWriter writer)
+			{
+				writer.Write(MagicCode);
+				writer.Write(RESERVED);
+				Elements.Write(writer);
+				Attributes.Write(writer);
+				StringTable.Write(writer);
+				ElementIndexTable.Write(writer);
+				AttributeIndexTable.Write(writer);
+				Variants.Write(writer);
+				writer.Write(RootElementIndex);
+			}
 		}
 
-		public class Element
+		public class Element : IComparable<Element>
 		{
 			public long Reserved { get; set; }
 			public int AttributeTableIndex { get; set; }
@@ -82,6 +98,8 @@ namespace FFXV.Services
 			public int VariantOffset { get; set; }
 
 			public string Name { get; set; }
+
+			public override string ToString() => Name;
 
 			public static Element Read(BinaryReader reader)
 			{
@@ -96,15 +114,40 @@ namespace FFXV.Services
 					VariantOffset = reader.ReadInt32(),
 				};
 			}
+
+			public void Write(BinaryWriter writer)
+			{
+				writer.Write((long)0);
+				writer.Write(AttributeTableIndex);
+				writer.Write(AttributeCount);
+				writer.Write(ElementTableIndex);
+				writer.Write(ElementCount);
+				writer.Write(NameStringOffset);
+				writer.Write(VariantOffset);
+			}
+
+			public int CompareTo(Element other)
+			{
+				return Reserved == other.Reserved &&
+					AttributeTableIndex == other.AttributeTableIndex &&
+					AttributeCount == other.AttributeCount &&
+					ElementTableIndex == other.ElementTableIndex &&
+					ElementCount == other.ElementCount &&
+					NameStringOffset == other.NameStringOffset &&
+					VariantOffset == other.VariantOffset ?
+					0 : 1;
+			}
 		}
 
-		public class Attribute
+		public class Attribute : IComparable<Attribute>
 		{
 			public long Reserved { get; set; }
 			public int NameStringOffset { get; set; }
-			public int VariantTableIndex { get; set; }
+			public int VariantOffset { get; set; }
 
 			public string Name { get; set; }
+
+			public override string ToString() => Name;
 
 			public static Attribute Read(BinaryReader reader)
 			{
@@ -112,15 +155,30 @@ namespace FFXV.Services
 				{
 					Reserved = reader.ReadInt64(),
 					NameStringOffset = reader.ReadInt32(),
-					VariantTableIndex = reader.ReadInt32(),
+					VariantOffset = reader.ReadInt32(),
 				};
+			}
+
+			public void Write(BinaryWriter writer)
+			{
+				writer.Write((long)0);
+				writer.Write(NameStringOffset);
+				writer.Write(VariantOffset);
+			}
+
+			public int CompareTo(Attribute other)
+			{
+				return Reserved == other.Reserved &&
+					NameStringOffset == other.NameStringOffset &&
+					VariantOffset == other.VariantOffset ?
+					0 : 1;
 			}
 		}
 
 		public class Variant
 		{
 			public ValueType Type { get; set; }
-			public int StringOffset { get; set; }
+			public int NameStringOffset { get; set; }
 			public int Value1 { get; set; }
 			public int Value2 { get; set; }
 			public int Value3 { get; set; }
@@ -128,53 +186,43 @@ namespace FFXV.Services
 
 			public string Name { get; set; }
 
-			public override string ToString()
-			{
-				switch (Type)
-				{
-					case ValueType.Unknown:
-						return Value1 == 0 && Value2 == 0 && Value3 == 0 && Value4 == 0 ? "" : "???";
-					case ValueType.Bool:
-						return (Value1 != 0).ToString();
-					case ValueType.Signed:
-						return Value1.ToString();
-					case ValueType.Unsigned:
-						return Value1.ToString();
-					case ValueType.Vector2:
-						return $"{ToFloat(Value1)},{ToFloat(Value2)}";
-					case ValueType.Vector3:
-						return $"{ToFloat(Value1)},{ToFloat(Value2)},{ToFloat(Value3)}";
-					case ValueType.Vector4:
-						return $"{ToFloat(Value1)},{ToFloat(Value2)},{ToFloat(Value3)},{ToFloat(Value4)}";
-					default:
-						return $"{Type}?? {Value1.ToString("X08")} {Value2.ToString("X08")} {Value3.ToString("X08")} {Value4.ToString("X08")}";
-				}
-			}
+			public override string ToString() => Name;
 
 			public static Variant Read(BinaryReader reader)
 			{
 				return new Variant()
 				{
 					Type = (ValueType)reader.ReadInt32(),
-					StringOffset = reader.ReadInt32(),
+					NameStringOffset = reader.ReadInt32(),
 					Value1 = reader.ReadInt32(),
 					Value2 = reader.ReadInt32(),
 					Value3 = reader.ReadInt32(),
 					Value4 = reader.ReadInt32(),
 				};
 			}
+
+			public void Write(BinaryWriter writer)
+			{
+				writer.Write((int)Type);
+				writer.Write(NameStringOffset);
+				writer.Write(Value1);
+				writer.Write(Value2);
+				writer.Write(Value3);
+				writer.Write(Value4);
+			}
 		}
 
-		private int rootElement;
+		private Header header;
 		private Element[] elements;
 		private Attribute[] attributes;
 		private Variant[] variants;
 		private int[] elementIndexTable;
 		private int[] attributeIndexTable;
+		private int rootElement;
 
-		public Xmb(BinaryReader reader)
+		private Xmb(BinaryReader reader)
 		{
-			var header = Header.Read(reader);
+			header = Header.Read(reader);
 			rootElement = header.RootElementIndex < header.Elements.Count ?
 				header.RootElementIndex : 0;
 
@@ -215,76 +263,24 @@ namespace FFXV.Services
 
 			for (int i = 0; i < elements.Length; i++)
 			{
-				elements[i].Name = ReadString(reader, header.StringTable.Offset + elements[i].NameStringOffset);
+				elements[i].Name = ReadString(reader.BaseStream, header.StringTable.Offset + elements[i].NameStringOffset);
 			}
 
 			for (int i = 0; i < attributes.Length; i++)
 			{
-				attributes[i].Name = ReadString(reader, header.StringTable.Offset + attributes[i].NameStringOffset);
+				attributes[i].Name = ReadString(reader.BaseStream, header.StringTable.Offset + attributes[i].NameStringOffset);
 			}
 
 			for (int i = 0; i < variants.Length; i++)
 			{
-				variants[i].Name = ReadString(reader, header.StringTable.Offset + variants[i].StringOffset);
+				variants[i].Name = ReadString(reader.BaseStream, header.StringTable.Offset + variants[i].NameStringOffset);
 			}
 		}
 
-		private XElement ReadNode(Element xmbElement)
+		private string ReadString(Stream stream, int offset)
 		{
-			var element = new XElement(xmbElement.Name);
-
-			var variantValue = variants[xmbElement.VariantOffset];
-			element.Value = variantValue.Name;
-
-			for (int i = 0; i < xmbElement.AttributeCount; i++)
-			{
-				var attributeIndex = attributeIndexTable[xmbElement.AttributeTableIndex + i];
-				var attribute = attributes[attributeIndex];
-				var value = variants[attribute.VariantTableIndex];
-				element.Add(new XAttribute(attribute.Name, value.Name));
-			}
-
-			for (int i = 0; i < xmbElement.ElementCount; i++)
-			{
-				var elementIndex = elementIndexTable[xmbElement.ElementTableIndex + i];
-				var node = ReadNode(elements[elementIndex]);
-				element.Add(node);
-			}
-
-			return element;
-		}
-
-		public XElement GetXDocument()
-		{
-			return ReadNode(elements[rootElement]);
-		}
-
-		private string ReadString(BinaryReader reader, int offset)
-		{
-			reader.BaseStream.Position = offset;
-			return ReadString(reader);
-		}
-
-		List<byte> _buffer = new List<byte>(0x100);
-		private string ReadString(BinaryReader reader)
-		{
-			_buffer.Clear();
-
-			byte c;
-			bool nonCharacterFound = false;
-			while ((c = reader.ReadByte()) != 0)
-			{
-				nonCharacterFound = c >= 0x00 && c <= 0x1f && c != 0x0a;
-				_buffer.Add(c);
-			}
-
-			if (nonCharacterFound)
-				nonCharacterFound = !nonCharacterFound;
-
-			var data = _buffer.ToArray();
-			return nonCharacterFound ?
-				Convert.ToBase64String(data) :
-				Encoding.UTF8.GetString(data);
+			stream.Position = offset;
+			return stream.ReadCString();
 		}
 
 		private static float ToFloat(int n)

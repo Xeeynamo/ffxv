@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace FFXV.Tools.XmbTool
 {
@@ -26,11 +27,11 @@ namespace FFXV.Tools.XmbTool
 		[Required]
 		public bool IsExport { get; }
 
-		[Option("-i|--input", "Input file", CommandOptionType.SingleValue, LongName = "input")]
+		[Option("-i|--input", "Input file or folder", CommandOptionType.SingleValue, LongName = "input")]
 		[Required]
 		public string Input { get; }
 
-		[Option("-o|--output", "Output file", CommandOptionType.SingleValue, LongName = "output")]
+		[Option("-o|--output", "Output file or folder", CommandOptionType.SingleValue, LongName = "output")]
 		[Required]
 		public string Output { get; }
 
@@ -81,10 +82,9 @@ namespace FFXV.Tools.XmbTool
 
 			using (var inStream = File.Open(input, FileMode.Open))
 			{
-				var xmb = new Xmb(new BinaryReader(inStream));
 				using (var outStream = File.Open(output, FileMode.Create))
 				{
-					xmb.GetXDocument().Save(outStream);
+					Xmb.Open(inStream).Save(outStream);
 				}
 			}
 		}
@@ -110,8 +110,16 @@ namespace FFXV.Tools.XmbTool
 
 		private void Import(string input, string output)
 		{
-			
-			throw new NotImplementedException();
+			if (IsVerbose)
+				Console.WriteLine(input);
+
+			using (var inStream = File.Open(input, FileMode.Open))
+			{
+				using (var outStream = File.Open(output, FileMode.Create))
+				{
+					Xmb.Save(inStream, XDocument.Load(inStream).Root);
+				}
+			}
 		}
 
 		private void Do(Operation operation, string input, string output)

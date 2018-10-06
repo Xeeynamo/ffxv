@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using Xe;
 
 namespace FFXV.Services
 {
@@ -257,9 +256,9 @@ namespace FFXV.Services
 			{
 				var entry = Entries[i];
 				reader.BaseStream.Position = _basePos + entry.FileNameOffset;
-				entry.FileName = reader.ReadCString();
+				entry.FileName = reader.BaseStream.ReadCString();
 				reader.BaseStream.Position = _basePos + entry.OriginalFileNameOffset;
-				entry.OriginalFileName = reader.ReadCString();
+				entry.OriginalFileName = reader.BaseStream.ReadCString();
 			}
 		}
 
