@@ -438,11 +438,11 @@ namespace FFXV.Services
 				if (f.Length > 0)
 					variant.Value1 = FromFloat(f[0]);
 				if (f.Length > 1)
-					variant.Value1 = FromFloat(f[1]);
+					variant.Value2 = FromFloat(f[1]);
 				if (f.Length > 2)
-					variant.Value1 = FromFloat(f[2]);
+					variant.Value3 = FromFloat(f[2]);
 				if (f.Length > 3)
-					variant.Value1 = FromFloat(f[3]);
+					variant.Value4 = FromFloat(f[3]);
 			}
 
 			private static int FromFloat(float f)
