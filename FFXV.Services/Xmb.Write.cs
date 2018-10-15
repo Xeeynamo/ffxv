@@ -285,42 +285,12 @@ namespace FFXV.Services
 				return collection.Count - 1;
 			}
 
-
-			private ValueType GetTypeFromAttributeName(string name, string value)
-			{
-				switch (name)
-				{
-					case "bool": return ValueType.Bool;
-					case "double":
-						{
-							if (value.IndexOf('.') >= 0)
-								return ValueType.Float;
-							return int.Parse(value) >= 0 ?
-								ValueType.Signed : ValueType.Unsigned;
-						}
-					case "float": return ValueType.Float;
-					case "float2": return ValueType.Float2;
-					case "float3": return ValueType.Float3;
-					case "float4": return ValueType.Float4;
-					default: return ValueType.Unknown;
-				}
-			}
-
 			public static ValueType GetTypeFromAttribute(string type, string value)
 			{
 				switch (type)
 				{
 					case "bool":
 						return ValueType.Bool;
-					//case "string":
-					//	switch (GuessTypeFromValue(value))
-					//	{
-					//		case ValueType.Bool:
-					//			return ValueType.Bool;
-					//		case ValueType.Unsigned:
-					//			return ValueType.Unsigned;
-					//	}
-					//	return ValueType.Unknown;
 					default:
 						return GuessTypeFromValue(value);
 				}
