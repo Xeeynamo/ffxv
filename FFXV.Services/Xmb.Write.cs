@@ -38,7 +38,7 @@ namespace FFXV.Services
 			{
 				var element = new Element()
 				{
-					NameStringOffset = GetOrAddString(xmlElement.Name.ToString()),
+					NameStringOffset = AddString(xmlElement.Name.ToString()),
 					Name = xmlElement.Name.ToString(),
 				};
 
@@ -49,15 +49,11 @@ namespace FFXV.Services
 
 					foreach (var xmlAttribute in xmlElement.Attributes())
 					{
-						var valueType = GuessTypeFromAttributeName(xmlAttribute.Name.ToString());
-						if (valueType == ValueType.Unknown)
-						{
-							var guessedValueType = GuessTypeFromValue(xmlAttribute.Value);
-						}
+						var valueType = GuessTypeFromValue(xmlAttribute.Value);
 
 						var attribute = new Attribute()
 						{
-							NameStringOffset = GetOrAddString(xmlAttribute.Name.ToString()),
+							NameStringOffset = AddString(xmlAttribute.Name.ToString()),
 							Name = xmlAttribute.Name.ToString(),
 							VariantOffset = GetOrAddVariantIndex(valueType, xmlAttribute.Value)
 						};
@@ -86,7 +82,7 @@ namespace FFXV.Services
 				}
 				else
 				{
-					var type = GetTypeFromAttributeName(elementStrType, xmlElement.Value);
+					var type = GetTypeFromAttribute(elementStrType, xmlElement.Value);
 					element.VariantOffset = GetOrAddVariantIndex(type, xmlElement.Value);
 				}
 
@@ -248,20 +244,17 @@ namespace FFXV.Services
 				}
 			}
 
-			private static int AddComparable<T>(List<T> collection, T item)
-				where T : IComparable<T>
+			private int GetOrAddVariantIndex(ValueType type, string value)
 			{
-				for (int i = 0; i < collection.Count; i++)
+				return AddComparable(variants, new Variant()
 				{
-					if (collection[i].CompareTo(item) == 0)
-						return i;
-				}
-
-				collection.Add(item);
-				return collection.Count - 1;
+					Type = type,
+					NameStringOffset = AddString(value),
+					Name = value,
+				});
 			}
 
-			private int GetOrAddString(string str)
+			private int AddString(string str)
 			{
 				int value;
 				if (!strings.TryGetValue(str, out var entry))
@@ -279,66 +272,19 @@ namespace FFXV.Services
 				return value;
 			}
 
-			private int GetOrAddVariantIndex(ValueType type, string value)
+			private static int AddComparable<T>(List<T> collection, T item)
+				where T : IComparable<T>
 			{
-				var index = GetVariantIndex(type, value);
-				if (index < 0)
+				for (int i = 0; i < collection.Count; i++)
 				{
-					index = variants.Count;
-
-					variants.Add(new Variant()
-					{
-						Type = type,
-						NameStringOffset = GetOrAddString(value),
-						Name = value,
-					});
+					if (collection[i].CompareTo(item) == 0)
+						return i;
 				}
 
-				return index;
+				collection.Add(item);
+				return collection.Count - 1;
 			}
 
-			private ValueType GuessTypeFromAttributeName(string name)
-			{
-				switch (name)
-				{
-					case "reference":
-					case "checked":
-						return ValueType.Bool;
-					case "objectIndex":
-					case "ownerIndex":
-					case "value":
-					case "fixid":
-						return ValueType.Unsigned;
-					default: return ValueType.Unknown;
-				}
-			}
-
-			private ValueType GuessTypeFromValue(string value)
-			{
-				switch (value)
-				{
-					case "true":
-					case "false":
-					case "True":
-					case "False":
-						return ValueType.Bool;
-					default:
-						if (value.Length > 0)
-						{
-							if (value[0] == '-')
-							{
-								if (int.TryParse(value, out var v))
-									return ValueType.Signed;
-							}
-							else
-							{
-								if (uint.TryParse(value, out var v))
-									return ValueType.Unsigned;
-							}
-						}
-						return ValueType.Unknown;
-				}
-			}
 
 			private ValueType GetTypeFromAttributeName(string name, string value)
 			{
@@ -360,21 +306,82 @@ namespace FFXV.Services
 				}
 			}
 
-			private int GetVariantIndex(ValueType type, string name)
+			public static ValueType GetTypeFromAttribute(string type, string value)
 			{
-				for (int i = 0; i < variants.Count; i++)
+				switch (type)
 				{
-					if (variants[i].Type == type &&
-						variants[i].Name == name)
-					{
-						return i;
-					}
+					case "bool":
+						return ValueType.Bool;
+					//case "string":
+					//	switch (GuessTypeFromValue(value))
+					//	{
+					//		case ValueType.Bool:
+					//			return ValueType.Bool;
+					//		case ValueType.Unsigned:
+					//			return ValueType.Unsigned;
+					//	}
+					//	return ValueType.Unknown;
+					default:
+						return GuessTypeFromValue(value);
 				}
-
-				return -1;
 			}
 
-			private void ProcessVariant(Variant variant)
+			public static ValueType GuessTypeFromValue(string value)
+			{
+				switch (value)
+				{
+					case null:
+						return ValueType.Unknown;
+					case "true":
+					case "false":
+					case "True":
+					case "False":
+						return ValueType.Bool;
+					default:
+						if (value.Length > 0)
+						{
+							if (value.Contains(",") || value.Contains("."))
+							{
+								// During an acceptance test on debug_wm.exml I found that
+								// the value -8.651422E-06,-145,8.651422E-06,1 is recognized
+								// as Float4 by my parser, but the actual file has Unknown as
+								// a type, which is odd. My opinion is that the parser in SQEX
+								// house is so stupid that recognize the f.ffE-XX as a string.
+								// This is why there is this awkard hack...
+								if (EnableIeeeHack && value.Contains("E"))
+									return ValueType.Unknown;
+
+								var values = value.Split(',');
+								if (float.TryParse(values[0], out var v))
+								{
+									switch (values.Length)
+									{
+										case 1: return ValueType.Float;
+										case 2: return ValueType.Float2;
+										case 3: return ValueType.Float3;
+										case 4: return ValueType.Float4;
+									}
+								}
+							}
+							else
+							{
+								if (value[0] == '-')
+								{
+									if (int.TryParse(value, out var v))
+										return ValueType.Signed;
+								}
+								else
+								{
+									if (uint.TryParse(value, out var v))
+										return ValueType.Unsigned;
+								}
+							}
+						}
+						return ValueType.Unknown;
+				}
+			}
+
+			private static void ProcessVariant(Variant variant)
 			{
 				switch (variant.Type)
 				{
@@ -418,19 +425,24 @@ namespace FFXV.Services
 
 			private static void ProcessFloat(Variant variant)
 			{
-				var values = variant.Name.Split(',');
+				FromFloatArray(variant, ConvertFloatsFromString(variant.Name));
+			}
+
+			private static float[] ConvertFloatsFromString(string value)
+			{
+				var values = value.Split(',');
 				var fArray = new float[values.Length];
 				for (int i = 0; i < fArray.Length; i++)
 				{
 					if (!float.TryParse(values[i], out var v))
 					{
-						throw new ArgumentException($"Unable to convert {variant.Name} for type {variant.Type}");
+						throw new ArgumentException($"Unable to convert {value}");
 					}
 
 					fArray[i] = v;
 				}
 
-				FromFloatArray(variant, fArray);
+				return fArray;
 			}
 
 			private static void FromFloatArray(Variant variant, float[] f)

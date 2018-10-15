@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -175,7 +175,7 @@ namespace FFXV.Services
 			}
 		}
 
-		public class Variant
+		public class Variant : IComparable<Variant>
 		{
 			public ValueType Type { get; set; }
 			public int NameStringOffset { get; set; }
@@ -210,8 +210,21 @@ namespace FFXV.Services
 				writer.Write(Value3);
 				writer.Write(Value4);
 			}
+
+			public int CompareTo(Variant other)
+			{
+				return Type == other.Type &&
+					NameStringOffset == other.NameStringOffset &&
+					Value1 == other.Value1 &&
+					Value2 == other.Value2 &&
+					Value3 == other.Value3 &&
+					Value4 == other.Value4 &&
+					Name == other.Name ?
+					0 : 1;
+			}
 		}
 
+		private const bool EnableIeeeHack = true;
 		private Header header;
 		private Element[] elements;
 		private Attribute[] attributes;
