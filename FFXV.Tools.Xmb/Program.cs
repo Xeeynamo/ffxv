@@ -47,11 +47,17 @@ namespace FFXV.Tools.XmbTool
 		{
 			if (IsDirectory)
 			{
-				Export(Input);
+				if (IsExport)
+					Export(Input);
+				else
+					Import(Input);
 			}
 			else
 			{
-				Export(Input, Output);
+				if (IsExport)
+					Export(Input, Output);
+				else
+					Import(Input, Output);
 			}
 		}
 
@@ -116,7 +122,7 @@ namespace FFXV.Tools.XmbTool
 			{
 				using (var outStream = File.Open(output, FileMode.Create))
 				{
-					Xmb.Save(inStream, XDocument.Load(inStream).Root);
+					Xmb.Save(outStream, XDocument.Load(inStream).Root);
 				}
 			}
 		}

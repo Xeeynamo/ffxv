@@ -101,6 +101,15 @@ namespace FFXV.Services
 
 			public override string ToString() => Name;
 
+			public override int GetHashCode()
+			{
+				return AttributeTableIndex ^
+					(AttributeCount * 433) ^ (ElementCount * 65729) ^
+					(ElementTableIndex << 13 | (ElementTableIndex >> 19)) ^
+					(NameStringOffset << 26 | (NameStringOffset >> 6)) ^
+					(VariantOffset << 7 | (VariantOffset >> 25));
+			}
+
 			public static Element Read(BinaryReader reader)
 			{
 				return new Element()
@@ -128,10 +137,9 @@ namespace FFXV.Services
 
 			public int CompareTo(Element other)
 			{
-				return Reserved == other.Reserved &&
-					AttributeTableIndex == other.AttributeTableIndex &&
-					AttributeCount == other.AttributeCount &&
+				return AttributeTableIndex == other.AttributeTableIndex &&
 					ElementTableIndex == other.ElementTableIndex &&
+					AttributeCount == other.AttributeCount &&
 					ElementCount == other.ElementCount &&
 					NameStringOffset == other.NameStringOffset &&
 					VariantOffset == other.VariantOffset ?
@@ -148,6 +156,11 @@ namespace FFXV.Services
 			public string Name { get; set; }
 
 			public override string ToString() => Name;
+
+			public override int GetHashCode()
+			{
+				return NameStringOffset | (VariantOffset << 16);
+			}
 
 			public static Attribute Read(BinaryReader reader)
 			{
@@ -168,8 +181,7 @@ namespace FFXV.Services
 
 			public int CompareTo(Attribute other)
 			{
-				return Reserved == other.Reserved &&
-					NameStringOffset == other.NameStringOffset &&
+				return NameStringOffset == other.NameStringOffset &&
 					VariantOffset == other.VariantOffset ?
 					0 : 1;
 			}
@@ -187,6 +199,11 @@ namespace FFXV.Services
 			public string Name { get; set; }
 
 			public override string ToString() => Name;
+
+			public override int GetHashCode()
+			{
+				return NameStringOffset | ((int)Type << 24);
+			}
 
 			public static Variant Read(BinaryReader reader)
 			{
@@ -213,13 +230,8 @@ namespace FFXV.Services
 
 			public int CompareTo(Variant other)
 			{
-				return Type == other.Type &&
-					NameStringOffset == other.NameStringOffset &&
-					Value1 == other.Value1 &&
-					Value2 == other.Value2 &&
-					Value3 == other.Value3 &&
-					Value4 == other.Value4 &&
-					Name == other.Name ?
+				return NameStringOffset == other.NameStringOffset &&
+					Type == other.Type ?
 					0 : 1;
 			}
 		}

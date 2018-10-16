@@ -21,6 +21,9 @@ namespace FFXV.Services
 			}
 
 			private Header header;
+			public Dictionary<int, int> dicElements = new Dictionary<int, int>();
+			public Dictionary<int, int> dicAttributes = new Dictionary<int, int>();
+			public Dictionary<int, int> dicVariants = new Dictionary<int, int>();
 			private List<Element> elements = new List<Element>();
 			private List<Attribute> attributes = new List<Attribute>();
 			private List<Variant> variants = new List<Variant>();
@@ -63,7 +66,7 @@ namespace FFXV.Services
 							elementStrType = xmlAttribute.Value;
 						}
 
-						attributeIndexes.Add(AddComparable(attributes, attribute));
+						attributeIndexes.Add(AddComparable(dicAttributes, attributes, attribute));
 						element.AttributeCount++;
 					}
 				}
@@ -88,7 +91,7 @@ namespace FFXV.Services
 
 				if (OptimizeSize)
 				{
-					return AddComparable(elements, element);
+					return AddComparable(dicElements, elements, element);
 				}
 
 				elements.Add(element);
@@ -246,7 +249,7 @@ namespace FFXV.Services
 
 			private int GetOrAddVariantIndex(ValueType type, string value)
 			{
-				return AddComparable(variants, new Variant()
+				return AddComparable(dicVariants, variants, new Variant()
 				{
 					Type = type,
 					NameStringOffset = AddString(value),
@@ -272,17 +275,25 @@ namespace FFXV.Services
 				return value;
 			}
 
-			private static int AddComparable<T>(List<T> collection, T item)
+			private static int AddComparable<T>(Dictionary<int, int> dictionary, List<T> collection, T item)
 				where T : IComparable<T>
 			{
-				for (int i = 0; i < collection.Count; i++)
+				AddComparable(dictionary, collection, item, out var result);
+				return result;
+			}
+
+			private static bool AddComparable<T>(Dictionary<int, int> dictionary, List<T> collection, T item, out int index)
+				where T : IComparable<T>
+			{
+				var hash = item.GetHashCode();
+				if (!dictionary.TryGetValue(hash, out index))
 				{
-					if (collection[i].CompareTo(item) == 0)
-						return i;
+					dictionary[index] = index = collection.Count;
+					collection.Add(item);
+					return true;
 				}
 
-				collection.Add(item);
-				return collection.Count - 1;
+				return false;
 			}
 
 			public static ValueType GetTypeFromAttribute(string type, string value)
