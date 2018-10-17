@@ -85,12 +85,15 @@ namespace FFXV.Tools.XmbTool
 			if (IsVerbose)
 				Console.WriteLine(input);
 
-			using (var inStream = File.Open(input, FileMode.Open))
+			XDocument doc;
+			using (var stream = File.OpenRead(input))
 			{
-				using (var outStream = File.Open(output, FileMode.Create))
-				{
-					Xmb.Open(inStream).Save(outStream);
-				}
+				doc = new Xmb(new BinaryReader(stream)).Document;
+			}
+
+			using (var stream = File.Create(output))
+			{
+				doc.Save(stream);
 			}
 		}
 
@@ -118,12 +121,15 @@ namespace FFXV.Tools.XmbTool
 			if (IsVerbose)
 				Console.WriteLine(input);
 
-			using (var inStream = File.Open(input, FileMode.Open))
+			XDocument doc;
+			using (var stream = File.Open(input, FileMode.Open))
 			{
-				using (var outStream = File.Open(output, FileMode.Create))
-				{
-					Xmb.Save(outStream, XDocument.Load(inStream).Root);
-				}
+				doc = XDocument.Load(stream);
+			}
+
+			using (var stream = File.Open(output, FileMode.Create))
+			{
+				new Xmb(doc).Write(new BinaryWriter(stream));
 			}
 		}
 

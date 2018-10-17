@@ -1,0 +1,6 @@
+<not-a-package name="test">
+	<items>
+		<item name="item1"/>
+		<item name="item2" id="1">Value</item>
+	</items>
+</not-a-package>

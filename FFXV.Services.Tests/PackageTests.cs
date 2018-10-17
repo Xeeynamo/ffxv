@@ -10,13 +10,13 @@ namespace FFXV.Services.Tests
 		[Fact]
 		public void PackageDeserialization()
 		{
-			XElement xml;
+			XDocument doc;
 			using (var stream = File.OpenRead("ocean.exml"))
 			{
-				xml = Xmb.Open(stream);
+				doc = new Xmb(new BinaryReader(stream)).Document;
 			}
 
-			var pkg = PackageService.Open(xml);
+			var pkg = PackageService.Open(doc.Root);
 			Assert.Equal("ocean", pkg.Name);
 
 			Assert.NotNull(pkg.Objects);
@@ -77,10 +77,13 @@ namespace FFXV.Services.Tests
 		[InlineData("ocean.exml")]
 		public void PackageCheckTypesOnDeserialization(string fileName)
 		{
+			XDocument doc;
 			using (var stream = File.OpenRead(fileName))
 			{
-				var pkg = PackageService.Open(Xmb.Open(stream));
+				doc = new Xmb(new BinaryReader(stream)).Document;
 			}
+
+			var pkg = PackageService.Open(doc.Root);
 		}
 	}
 }

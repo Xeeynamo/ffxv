@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2036
@@ -14,11 +14,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFXV.Tools.Xmb", "FFXV.Tool
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFXV.Services.Tests", "FFXV.Services.Tests\FFXV.Services.Tests.csproj", "{2D337DA1-1253-4FE5-8681-88B237D7EE3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Black", "Black\Black.csproj", "{EBD8B5C7-DC8C-45C5-AA4C-4916838DF2F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Black", "Black\Black.csproj", "{EBD8B5C7-DC8C-45C5-AA4C-4916838DF2F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFXV.Models", "FFXV.Models\FFXV.Models.csproj", "{C359052B-2871-4C90-BD99-1E090C8EC1D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFXV.Models", "FFXV.Models\FFXV.Models.csproj", "{C359052B-2871-4C90-BD99-1E090C8EC1D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQEX.Ebony", "SQEX.Ebony\SQEX.Ebony.csproj", "{E72B3990-0FC5-4BF8-A5F1-895F1C04707A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQEX.Ebony", "SQEX.Ebony\SQEX.Ebony.csproj", "{E72B3990-0FC5-4BF8-A5F1-895F1C04707A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

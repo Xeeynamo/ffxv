@@ -18,4 +18,16 @@
     <ProjectReference Include="..\FFXV.Services\FFXV.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="xmb\acceptance-test.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="xmb\performance-test1.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="xmb\performance-test2.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

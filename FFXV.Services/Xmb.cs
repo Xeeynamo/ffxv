@@ -1,7 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Xml.Linq;
 
 namespace FFXV.Services
 {
@@ -43,15 +44,15 @@ namespace FFXV.Services
 
 		private class Header
 		{
-			public uint MagicCode { get; set; }
-			public uint RESERVED { get; set; }
-			public HeaderEntry Elements { get; set; }
-			public HeaderEntry Attributes { get; set; }
-			public HeaderEntry StringTable { get; set; }
-			public HeaderEntry ElementIndexTable { get; set; }
-			public HeaderEntry AttributeIndexTable { get; set; }
-			public HeaderEntry Variants { get; set; }
-			public int RootElementIndex { get; set; }
+			public uint MagicCode { get; internal set; }
+			public uint RESERVED { get; internal set; }
+			public HeaderEntry Elements { get; internal set; }
+			public HeaderEntry Attributes { get; internal set; }
+			public HeaderEntry StringTable { get; internal set; }
+			public HeaderEntry ElementIndexTable { get; internal set; }
+			public HeaderEntry AttributeIndexTable { get; internal set; }
+			public HeaderEntry Variants { get; internal set; }
+			public int RootElementIndex { get; internal set; }
 
 			public static Header Read(BinaryReader reader)
 			{
@@ -89,15 +90,15 @@ namespace FFXV.Services
 
 		public class Element : IComparable<Element>
 		{
-			public long Reserved { get; set; }
-			public int AttributeTableIndex { get; set; }
-			public int AttributeCount { get; set; }
-			public int ElementTableIndex { get; set; }
-			public int ElementCount { get; set; }
-			public int NameStringOffset { get; set; }
-			public int VariantOffset { get; set; }
+			public long Reserved { get; internal set; }
+			public int AttributeTableIndex { get; internal set; }
+			public int AttributeCount { get; internal set; }
+			public int ElementTableIndex { get; internal set; }
+			public int ElementCount { get; internal set; }
+			public int NameStringOffset { get; internal set; }
+			public int VariantOffset { get; internal set; }
 
-			public string Name { get; set; }
+			public string Name { get; internal set; }
 
 			public override string ToString() => Name;
 
@@ -149,11 +150,11 @@ namespace FFXV.Services
 
 		public class Attribute : IComparable<Attribute>
 		{
-			public long Reserved { get; set; }
-			public int NameStringOffset { get; set; }
-			public int VariantOffset { get; set; }
+			public long Reserved { get; internal set; }
+			public int NameStringOffset { get; internal set; }
+			public int VariantOffset { get; internal set; }
 
-			public string Name { get; set; }
+			public string Name { get; internal set; }
 
 			public override string ToString() => Name;
 
@@ -189,14 +190,14 @@ namespace FFXV.Services
 
 		public class Variant : IComparable<Variant>
 		{
-			public ValueType Type { get; set; }
-			public int NameStringOffset { get; set; }
-			public int Value1 { get; set; }
-			public int Value2 { get; set; }
-			public int Value3 { get; set; }
-			public int Value4 { get; set; }
+			public ValueType Type { get; internal set; }
+			public int NameStringOffset { get; internal set; }
+			public int Value1 { get; internal set; }
+			public int Value2 { get; internal set; }
+			public int Value3 { get; internal set; }
+			public int Value4 { get; internal set; }
 
-			public string Name { get; set; }
+			public string Name { get; internal set; }
 
 			public override string ToString() => Name;
 
@@ -236,76 +237,119 @@ namespace FFXV.Services
 			}
 		}
 
-		private const bool EnableIeeeHack = true;
-		private Header header;
-		private Element[] elements;
-		private Attribute[] attributes;
-		private Variant[] variants;
-		private int[] elementIndexTable;
-		private int[] attributeIndexTable;
-		private int rootElement;
+		private List<Element> _elements;
+		private List<Attribute> _attributes;
+		private List<Variant> _variants;
+		private List<int> _elementIndexTable;
+		private List<int> _attributeIndexTable;
+		private int rootElementIndex;
 
-		private Xmb(BinaryReader reader)
+		public int RootElementIndex => rootElementIndex;
+
+		public IEnumerable<Element> Elements => _elements;
+
+		public IEnumerable<Attribute> Attributes => _attributes;
+
+		public IEnumerable<Variant> Variants => _variants;
+
+		public IEnumerable<int> ElementIndexTable => _elementIndexTable;
+
+		public IEnumerable<int> AttributeIndexTable => _attributeIndexTable;
+
+		public byte[] StringData { get; private set; }
+
+		public XDocument Document => new XDocument(ReadRootNode());
+
+		private Xmb()
 		{
-			header = Header.Read(reader);
-			rootElement = header.RootElementIndex < header.Elements.Count ?
-				header.RootElementIndex : 0;
+			_elements = new List<Element>();
+			_attributes = new List<Attribute>();
+			_variants = new List<Variant>();
+			_elementIndexTable = new List<int>();
+			_attributeIndexTable = new List<int>();
+		}
 
-			reader.BaseStream.Position = header.Elements.Offset;
-			elements = new Element[header.Elements.Count];
-			for (int i = 0; i < elements.Length; i++)
+		public Xmb(BinaryReader reader)
+		{
+			var header = Header.Read(reader);
+			rootElementIndex = header.RootElementIndex;
+
+			_elements = ReadTable(header.Elements, reader, r => Element.Read(r));
+			_attributes = ReadTable(header.Attributes, reader, r => Attribute.Read(r));
+			_variants = ReadTable(header.Variants, reader, r => Variant.Read(r));
+			_elementIndexTable = ReadTable(header.ElementIndexTable, reader, r => r.ReadInt32());
+			_attributeIndexTable = ReadTable(header.AttributeIndexTable, reader, r => r.ReadInt32());
+
+			reader.BaseStream.Position = header.StringTable.Offset;
+			StringData = reader.ReadBytes(header.StringTable.Count);
+
+			ReadStrings(_elements, StringData, (x, s) => x.Name = s, x => x.NameStringOffset);
+			ReadStrings(_attributes, StringData, (x, s) => x.Name = s, x => x.NameStringOffset);
+			ReadStrings(_variants, StringData, (x, s) => x.Name = s, x => x.NameStringOffset);
+		}
+		
+		private XElement ReadNode(Element xmbElement)
+		{
+			var element = new XElement(xmbElement.Name);
+
+			var variantValue = _variants[xmbElement.VariantOffset];
+			element.Value = variantValue.Name;
+
+			for (int i = 0; i < xmbElement.AttributeCount; i++)
 			{
-				elements[i] = Element.Read(reader);
+				var attributeIndex = _attributeIndexTable[xmbElement.AttributeTableIndex + i];
+				var attribute = _attributes[attributeIndex];
+				var value = _variants[attribute.VariantOffset];
+				element.Add(new XAttribute(attribute.Name, value.Name));
 			}
 
-			reader.BaseStream.Position = header.Attributes.Offset;
-			attributes = new Attribute[header.Attributes.Count];
-			for (int i = 0; i < attributes.Length; i++)
+			for (int i = 0; i < xmbElement.ElementCount; i++)
 			{
-				attributes[i] = Attribute.Read(reader);
+				var elementIndex = _elementIndexTable[xmbElement.ElementTableIndex + i];
+				var node = ReadNode(_elements[elementIndex]);
+				element.Add(node);
 			}
 
-			reader.BaseStream.Position = header.Variants.Offset;
-			variants = new Variant[header.Variants.Count];
-			for (int i = 0; i < variants.Length; i++)
+			return element;
+		}
+
+		private XElement ReadRootNode()
+		{
+			return ReadNode(_elements[rootElementIndex]);
+		}
+
+		private static List<T> ReadTable<T>(HeaderEntry entry, BinaryReader reader, Func<BinaryReader, T> funcRead)
+		{
+			var list = (List<T>)Activator.CreateInstance(typeof(List<>).MakeGenericType(typeof(T)));
+
+			reader.BaseStream.Position = entry.Offset;
+			for (int i = 0; i < entry.Count; i++)
 			{
-				variants[i] = Variant.Read(reader);
+				list.Add(funcRead(reader));
 			}
 
-			reader.BaseStream.Position = header.ElementIndexTable.Offset;
-			elementIndexTable = new int[header.ElementIndexTable.Count];
-			for (int i = 0; i < elementIndexTable.Length; i++)
-			{
-				elementIndexTable[i] = reader.ReadInt32();
-			}
+			return list;
+		}
 
-			reader.BaseStream.Position = header.AttributeIndexTable.Offset;
-			attributeIndexTable = new int[header.AttributeIndexTable.Count];
-			for (int i = 0; i < attributeIndexTable.Length; i++)
+		private static void ReadStrings<T>(IEnumerable<T> table, byte[] strData, Action<T,string> funcSetString, Func<T, int> funcGetStrIndex)
+		{
+			foreach (var item in table)
 			{
-				attributeIndexTable[i] = reader.ReadInt32();
-			}
-
-			for (int i = 0; i < elements.Length; i++)
-			{
-				elements[i].Name = ReadString(reader.BaseStream, header.StringTable.Offset + elements[i].NameStringOffset);
-			}
-
-			for (int i = 0; i < attributes.Length; i++)
-			{
-				attributes[i].Name = ReadString(reader.BaseStream, header.StringTable.Offset + attributes[i].NameStringOffset);
-			}
-
-			for (int i = 0; i < variants.Length; i++)
-			{
-				variants[i].Name = ReadString(reader.BaseStream, header.StringTable.Offset + variants[i].NameStringOffset);
+				funcSetString(item, ReadString(item, strData, funcGetStrIndex));
 			}
 		}
 
-		private string ReadString(Stream stream, int offset)
+		private static string ReadString<T>(T entry, byte[] strData, Func<T, int> funcGetStrIndex)
 		{
-			stream.Position = offset;
-			return stream.ReadCString();
+			var offset = funcGetStrIndex(entry);
+			var count = 0;
+
+			while (strData[offset + count] != 0)
+			{
+				count++;
+			}
+
+			return Encoding.UTF8.GetString(strData, offset, count);
 		}
 
 		private static float ToFloat(int n)

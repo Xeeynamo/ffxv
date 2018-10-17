@@ -1,0 +1,14 @@
+<not-a-package name="performance-test1">
+	<object name="object">
+		<entry value="0"></entry>
+		<entry value="0"></entry>
+	</object>
+	<object name="object">
+		<entry value="1"></entry>
+		<entry value="0"></entry>
+	</object>
+	<object name="object">
+		<entry value="0"></entry>
+		<entry value="0"></entry>
+	</object>
+</not-a-package>

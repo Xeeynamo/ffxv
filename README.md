@@ -15,9 +15,13 @@ Not all the packages have all the types mapped. Creating a model is straight for
 7) Run the test and be 100% sure that it passes.
 8) Create a pull request :)
 
+Currently XmbAcceptanceTest and XmbEqualityTest passes, which guarantee that the XMB de/encoder is working fine! 
+
 ### XML to XMB performance
 
 Currently there is a performance issue converting from XML to XMB1, where equal elements are written more than once instead of using the ElementIndexTable to make the file smaller. The converted EXML are still readable from the game, but performance problems could arise (to confirm).
+
+The tests XmbOptimizationTest and XmbPerformanceTest will fail due to this mis-optimization of the XMB encoder.
 
 ### Tools
 
