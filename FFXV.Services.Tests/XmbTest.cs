@@ -143,16 +143,14 @@ namespace FFXV.Services.Tests
 			var xmb = new Xmb(document);
 			Assert.Equal(2, xmb.Elements.Count());
 			Assert.Equal(2, xmb.Attributes.Count());
-			Assert.Equal(6, xmb.Variants.Count());
-			Assert.Equal(3, xmb.ElementIndexTable.Count());
-			Assert.Equal(3, xmb.AttributeIndexTable.Count());
+			Assert.Equal(3, xmb.Variants.Count());
+			Assert.Equal(2, xmb.ElementIndexTable.Count());
+			Assert.Equal(2, xmb.AttributeIndexTable.Count());
 
 			At(xmb.ElementIndexTable, 0, x => Assert.Equal(0, x));
 			At(xmb.ElementIndexTable, 1, x => Assert.Equal(0, x));
-			At(xmb.ElementIndexTable, 2, x => Assert.Equal(1, x));
 			At(xmb.AttributeIndexTable, 0, x => Assert.Equal(0, x));
-			At(xmb.AttributeIndexTable, 1, x => Assert.Equal(0, x));
-			At(xmb.AttributeIndexTable, 2, x => Assert.Equal(1, x));
+			At(xmb.AttributeIndexTable, 1, x => Assert.Equal(1, x));
 
 			At(xmb.Elements, 0, e =>
 			{
@@ -171,6 +169,32 @@ namespace FFXV.Services.Tests
 				Assert.Equal(1, e.AttributeTableIndex);
 				Assert.Equal(1, e.AttributeCount);
 			});
+		}
+
+		[Fact]
+		public void CollisionTest()
+		{
+			var h1 = new Xmb.Element()
+			{
+				AttributeCount = 0,
+				AttributeTableIndex = 0,
+				ElementCount = 4,
+				ElementTableIndex = 4334,
+				NameStringOffset = 282,
+				VariantOffset = 3
+			};
+
+			var h2 = new Xmb.Element()
+			{
+				AttributeCount = 0,
+				AttributeTableIndex = 0,
+				ElementCount = 4,
+				ElementTableIndex = 12526,
+				NameStringOffset = 283,
+				VariantOffset = 3
+			};
+
+			Assert.NotEqual(h1.GetHashCode(), h2.GetHashCode());
 		}
 
 		[Theory]

@@ -88,28 +88,19 @@ namespace FFXV.Services
 			}
 		}
 
-		public class Element : IComparable<Element>
+		public class Element : IComparable<Element>, IHashable
 		{
-			public long Reserved { get; internal set; }
-			public int AttributeTableIndex { get; internal set; }
-			public int AttributeCount { get; internal set; }
-			public int ElementTableIndex { get; internal set; }
-			public int ElementCount { get; internal set; }
-			public int NameStringOffset { get; internal set; }
-			public int VariantOffset { get; internal set; }
+			public long Reserved { get; set; }
+			public int AttributeTableIndex { get; set; }
+			public int AttributeCount { get; set; }
+			public int ElementTableIndex { get; set; }
+			public int ElementCount { get; set; }
+			public int NameStringOffset { get; set; }
+			public int VariantOffset { get; set; }
 
-			public string Name { get; internal set; }
+			public string Name { get; set; }
 
 			public override string ToString() => Name;
-
-			public override int GetHashCode()
-			{
-				return AttributeTableIndex ^
-					(AttributeCount * 433) ^ (ElementCount * 65729) ^
-					(ElementTableIndex << 13 | (ElementTableIndex >> 19)) ^
-					(NameStringOffset << 26 | (NameStringOffset >> 6)) ^
-					(VariantOffset << 7 | (VariantOffset >> 25));
-			}
 
 			public static Element Read(BinaryReader reader)
 			{
@@ -146,9 +137,14 @@ namespace FFXV.Services
 					VariantOffset == other.VariantOffset ?
 					0 : 1;
 			}
+
+			public ulong GetHash(IHashing<ulong> hashing)
+			{
+				return hashing.GetDigest(AttributeTableIndex, AttributeCount, ElementTableIndex, ElementCount, NameStringOffset, VariantOffset);
+			}
 		}
 
-		public class Attribute : IComparable<Attribute>
+		public class Attribute : IComparable<Attribute>, IHashable
 		{
 			public long Reserved { get; internal set; }
 			public int NameStringOffset { get; internal set; }
@@ -157,11 +153,6 @@ namespace FFXV.Services
 			public string Name { get; internal set; }
 
 			public override string ToString() => Name;
-
-			public override int GetHashCode()
-			{
-				return NameStringOffset | (VariantOffset << 16);
-			}
 
 			public static Attribute Read(BinaryReader reader)
 			{
@@ -186,9 +177,14 @@ namespace FFXV.Services
 					VariantOffset == other.VariantOffset ?
 					0 : 1;
 			}
+
+			public ulong GetHash(IHashing<ulong> hashing)
+			{
+				return hashing.GetDigest(NameStringOffset, VariantOffset);
+			}
 		}
 
-		public class Variant : IComparable<Variant>
+		public class Variant : IComparable<Variant>, IHashable
 		{
 			public ValueType Type { get; internal set; }
 			public int NameStringOffset { get; internal set; }
@@ -200,11 +196,6 @@ namespace FFXV.Services
 			public string Name { get; internal set; }
 
 			public override string ToString() => Name;
-
-			public override int GetHashCode()
-			{
-				return NameStringOffset | ((int)Type << 24);
-			}
 
 			public static Variant Read(BinaryReader reader)
 			{
@@ -234,6 +225,11 @@ namespace FFXV.Services
 				return NameStringOffset == other.NameStringOffset &&
 					Type == other.Type ?
 					0 : 1;
+			}
+
+			public ulong GetHash(IHashing<ulong> hashing)
+			{
+				return hashing.GetDigest(NameStringOffset, (int)Type);
 			}
 		}
 

@@ -10,6 +10,7 @@ namespace FFXV.Services
 	{
 		private const bool EnableIeeeHack = true;
 		private static readonly bool OptimizeSize = true;
+		private static Crc64 crc = new Crc64();
 
 		private class StringEntry
 		{
@@ -18,9 +19,9 @@ namespace FFXV.Services
 			public int Offset { get; set; }
 		}
 
-		private Dictionary<int, int> dicElements;
-		private Dictionary<int, int> dicAttributes;
-		private Dictionary<int, int> dicVariants;
+		private Dictionary<ulong, int> dicElements;
+		private Dictionary<ulong, int> dicAttributes;
+		private Dictionary<ulong, int> dicVariants;
 		private Dictionary<string, StringEntry> strings;
 
 		public Xmb(XDocument document) :
@@ -32,10 +33,11 @@ namespace FFXV.Services
 
 		private void ReadRootElement(XElement element)
 		{
-			dicElements = new Dictionary<int, int>();
-			dicAttributes = new Dictionary<int, int>();
-			dicVariants = new Dictionary<int, int>();
+			dicElements = new Dictionary<ulong, int>();
+			dicAttributes = new Dictionary<ulong, int>();
+			dicVariants = new Dictionary<ulong, int>();
 			strings = new Dictionary<string, StringEntry>();
+			crc = new Crc64();
 			rootElementIndex = ReadElement(element);
 		}
 
@@ -52,6 +54,7 @@ namespace FFXV.Services
 			{
 				element.AttributeTableIndex = _attributeIndexTable.Count;
 
+				var attributeIndexList = new List<int>();
 				foreach (var xmlAttribute in xmlElement.Attributes())
 				{
 					var valueType = GuessTypeFromValue(xmlAttribute.Value);
@@ -68,8 +71,15 @@ namespace FFXV.Services
 						elementStrType = xmlAttribute.Value;
 					}
 
-					_attributeIndexTable.Add(AddComparable(dicAttributes, _attributes, attribute));
+					attributeIndexList.Add(AddComparable(dicAttributes, _attributes, attribute));
 					element.AttributeCount++;
+				}
+
+				element.AttributeTableIndex = OptimizeSize ? FindMatch(attributeIndexList, _attributeIndexTable) : -1;
+				if (element.AttributeTableIndex < 0)
+				{
+					element.AttributeTableIndex = _attributeIndexTable.Count;
+					_attributeIndexTable.AddRange(attributeIndexList);
 				}
 			}
 
@@ -217,20 +227,95 @@ namespace FFXV.Services
 			return value;
 		}
 
-		private static int AddComparable<T>(Dictionary<int, int> dictionary, List<T> collection, T item)
-			where T : IComparable<T>
+		public static int FindMatch(List<int> pattern, List<int> list)
+		{
+			// Unroll the nested for loop to achieve more performance
+			switch (pattern.Count)
+			{
+				case 0:
+					return 0;
+				case 1:
+					for (int i = 0; i < list.Count; i++)
+					{
+						if (list[i] == pattern[0])
+							return i;
+					}
+					break;
+				case 2:
+					for (int i = 0; i < list.Count - 1; i++)
+					{
+						if (list[i] == pattern[0] &&
+							list[i + 1] == pattern[1])
+							return i;
+					}
+					break;
+				case 3:
+					for (int i = 0; i < list.Count - 2; i++)
+					{
+						if (list[i] == pattern[0] &&
+							list[i + 1] == pattern[1] &&
+							list[i + 2] == pattern[2])
+							return i;
+					}
+					break;
+				case 4:
+					for (int i = 0; i < list.Count - 3; i++)
+					{
+						if (list[i] == pattern[0] &&
+							list[i + 1] == pattern[1] &&
+							list[i + 2] == pattern[2] &&
+							list[i + 3] == pattern[3])
+							return i;
+					}
+					break;
+				case 8: // used often
+					for (int i = 0; i < list.Count - 3; i++)
+					{
+						if (list[i] == pattern[0] &&
+							list[i + 1] == pattern[1] &&
+							list[i + 2] == pattern[2] &&
+							list[i + 3] == pattern[3] &&
+							list[i + 4] == pattern[4] &&
+							list[i + 5] == pattern[5] &&
+							list[i + 6] == pattern[6] &&
+							list[i + 7] == pattern[7])
+							return i;
+					}
+					break;
+				default:
+					for (int i = 0, j, k; i <= list.Count - pattern.Count; i++)
+					{
+						if (list[i] != pattern[0])
+							continue;
+
+						j = 1;
+						k = i + 1;
+						do
+						{
+							if (j >= pattern.Count)
+								return i;
+						} while (list[k++] == pattern[j++]);
+					}
+					break;
+			}
+
+			return -1;
+		}
+
+		private static int AddComparable<T>(Dictionary<ulong, int> dictionary, List<T> collection, T item)
+			where T : IComparable<T>, IHashable
 		{
 			AddComparable(dictionary, collection, item, out var result);
 			return result;
 		}
 
-		private static bool AddComparable<T>(Dictionary<int, int> dictionary, List<T> collection, T item, out int index)
-			where T : IComparable<T>
+		private static bool AddComparable<T>(Dictionary<ulong, int> dictionary, List<T> collection, T item, out int index)
+			where T : IComparable<T>, IHashable
 		{
-			var hash = item.GetHashCode();
+			var hash = item.GetHash(crc);
 			if (!dictionary.TryGetValue(hash, out index))
 			{
-				dictionary[index] = index = collection.Count;
+				dictionary[hash] = index = collection.Count;
 				collection.Add(item);
 				return true;
 			}
