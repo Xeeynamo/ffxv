@@ -119,7 +119,6 @@ namespace FFXV.Services.Tests
 		[InlineData("cl_qt004_02.exml")]
 		[InlineData("debug_quest.exml")]
 		[InlineData("map_cl_d01_a_battle.exml")]
-		[InlineData("nh_ai_000.exml")]
 		public void XmbEqualityTest(string fileName)
 		{
 			XDocument doc;
@@ -211,7 +210,6 @@ namespace FFXV.Services.Tests
 		[InlineData("cl_qt004_02.exml")]
 		[InlineData("debug_quest.exml")]
 		[InlineData("map_cl_d01_a_battle.exml")]
-		[InlineData("nh_ai_000.exml")]
 		public void XmbPerformanceTest(string fileName)
 		{
 			Xmb xmbOrigin;

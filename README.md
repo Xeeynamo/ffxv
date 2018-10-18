@@ -15,14 +15,6 @@ Not all the packages have all the types mapped. Creating a model is straight for
 7) Run the test and be 100% sure that it passes.
 8) Create a pull request :)
 
-Currently XmbAcceptanceTest and XmbEqualityTest passes, which guarantee that the XMB de/encoder is working fine! 
-
-### XML to XMB performance
-
-Currently there is a performance issue converting from XML to XMB1, where equal elements are written more than once instead of using the ElementIndexTable to make the file smaller. The converted EXML are still readable from the game, but performance problems could arise (to confirm).
-
-The tests XmbOptimizationTest and XmbPerformanceTest will fail due to this mis-optimization of the XMB encoder.
-
 ### Tools
 
 The following tools are missing:
@@ -47,10 +39,6 @@ Since the complexity of the PackageService deserializer, there are some tests to
 
 ### XMB
 XMB is used by Final Fantasy XV Episode Duscae and Platinum Demo and can be modified using [xmbtool](#xmbtool).
-
-A lot of source-code currently has assertions and checks, that will be removed once the library is complete.
-
-The missing step to convert from XML to XMB is that I am not re-using the existing elements, generatig a huge file. For example the original debug_wm.exml is only 757KB but the converted one is 2.1MB! It works on the retail game, but repacking everything will probably lead to memory issues in the game. I plan to optimize later. It is better than nothing, right?
 
 [The full documentation is available here.](https://www.lucianociccariello.com/research/finalfantasyxv#xmb)
 
