@@ -85,13 +85,17 @@ namespace FFXV.Services
 
 			if (xmlElement.HasElements)
 			{
-				var curElementIndexes = xmlElement.Elements()
+				var elementIndexList = xmlElement.Elements()
 					.Select(x => ReadElement(x))
-					.ToArray();
+					.ToList();
 
-				element.ElementTableIndex = _elementIndexTable.Count;
-				element.ElementCount = curElementIndexes.Length;
-				_elementIndexTable.AddRange(curElementIndexes);
+				element.ElementCount = elementIndexList.Count;
+				element.ElementTableIndex = OptimizeSize ? FindMatch(elementIndexList, _elementIndexTable) : -1;
+				if (element.ElementTableIndex < 0)
+				{
+					element.ElementTableIndex = _elementIndexTable.Count;
+					_elementIndexTable.AddRange(elementIndexList);
+				}
 
 				element.VariantOffset = GetOrAddVariantIndex(ValueType.Unknown, string.Empty);
 			}

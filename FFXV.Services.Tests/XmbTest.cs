@@ -157,7 +157,7 @@ namespace FFXV.Services.Tests
 				Assert.Equal("entry", e.Name);
 				Assert.Equal(0, e.ElementTableIndex);
 				Assert.Equal(0, e.ElementCount);
-				Assert.Equal(0, e.AttributeTableIndex);
+				Assert.Equal(1, e.AttributeTableIndex);
 				Assert.Equal(1, e.AttributeCount);
 			});
 
@@ -166,7 +166,7 @@ namespace FFXV.Services.Tests
 				Assert.Equal("not-a-package", e.Name);
 				Assert.Equal(0, e.ElementTableIndex);
 				Assert.Equal(2, e.ElementCount);
-				Assert.Equal(1, e.AttributeTableIndex);
+				Assert.Equal(0, e.AttributeTableIndex);
 				Assert.Equal(1, e.AttributeCount);
 			});
 		}
