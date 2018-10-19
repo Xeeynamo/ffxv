@@ -1,43 +1,7 @@
 ﻿using System.Text;
 
-namespace FFXV.Services
+namespace FFXV.Utilities
 {
-	public interface IHashable
-	{
-		ulong GetHash(IHashing<ulong> hashing);
-	}
-
-	public interface IHashing<T>
-	{
-		void Init();
-		void WriteByte(byte b);
-		void Write(byte[] data, uint offset, uint size);
-
-		T GetDigest();
-	}
-
-	public static class HashingExtension
-	{
-		public static T GetDigest<T>(this IHashing<T> hashing, params int[] values)
-		{
-			hashing.Init();
-			hashing.Write(values);
-			return hashing.GetDigest();
-		}
-
-		public static void Write<T>(this IHashing<T> hashing, params int[] values)
-		{
-			for (int i = 0; i < values.Length; i++)
-			{
-				var v = values[i];
-				hashing.WriteByte((byte)(v >> 0));
-				hashing.WriteByte((byte)(v >> 8));
-				hashing.WriteByte((byte)(v >> 16));
-				hashing.WriteByte((byte)(v >> 24));
-			}
-		}
-	}
-
 	public class Crc64 : IHashing<ulong>
 	{
 		private static Crc64 Instance = new Crc64();

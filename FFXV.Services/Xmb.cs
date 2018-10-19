@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FFXV.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -19,6 +20,11 @@ namespace FFXV.Services
 			Float2,
 			Float3,
 			Float4,
+		}
+
+		public interface IHashable
+		{
+			ulong GetHash(IHashing<ulong> hashing);
 		}
 
 		private class HeaderEntry
