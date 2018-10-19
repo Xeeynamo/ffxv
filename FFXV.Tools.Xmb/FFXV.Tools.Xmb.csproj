@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FFXV.Services\FFXV.Services.csproj" />
+    <ProjectReference Include="..\FFXV.Utilities\FFXV.Utilities.csproj" />
   </ItemGroup>
 
 </Project>

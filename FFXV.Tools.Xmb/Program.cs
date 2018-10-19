@@ -1,9 +1,14 @@
 ﻿using FFXV.Services;
+using FFXV.Utilities;
 using McMaster.Extensions.CommandLineUtils;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace FFXV.Tools.XmbTool
@@ -13,6 +18,7 @@ namespace FFXV.Tools.XmbTool
 	{
 		private static readonly string ExtXml = ".xml";
 		private static readonly string ExtExml = ".exml";
+		private const bool IsParallel = true;
 
 		private delegate void Operation(string input, string output);
 
@@ -61,21 +67,29 @@ namespace FFXV.Tools.XmbTool
 			}
 		}
 
+		private int MaxParallelTasksCount = Process.GetCurrentProcess().Threads.Count;
+
+		private static bool IsExml(string fileName) => fileName.EndsWith(ExtExml);
+		private static bool IsXml(string fileName) => fileName.EndsWith(ExtXml);
+
 		private void Export(string path)
 		{
-			foreach (var file in Directory.GetFiles(path))
-			{
-				if (file.EndsWith(ExtExml))
-				{
-					Do(Export, file, file.Replace(ExtExml, ExtXml));
-				}
-			}
+			var fileNames = GetFilesList(new List<string>(), path, IsRecursive, IsExml);
 
-			if (IsRecursive)
+			if (IsParallel)
 			{
-				foreach (var dir in Directory.GetDirectories(path))
+				var tasks = fileNames.Select(fileName => Task.Run(() =>
 				{
-					Export(dir);
+					Do(Export, fileName, fileName.Replace(ExtExml, ExtXml));
+				}));
+
+				tasks.WaitAll(MaxParallelTasksCount);
+			}
+			else
+			{
+				foreach (var fileName in fileNames)
+				{
+					Do(Export, fileName, fileName.Replace(ExtExml, ExtXml));
 				}
 			}
 		}
@@ -99,19 +113,22 @@ namespace FFXV.Tools.XmbTool
 
 		private void Import(string path)
 		{
-			foreach (var file in Directory.GetFiles(path))
-			{
-				if (file.EndsWith(ExtXml))
-				{
-					Do(Export, file, file.Replace(ExtXml, ExtExml));
-				}
-			}
+			var fileNames = GetFilesList(new List<string>(), path, IsRecursive, IsXml);
 
-			if (IsRecursive)
+			if (IsParallel)
 			{
-				foreach (var dir in Directory.GetDirectories(path))
+				var tasks = fileNames.Select(fileName => Task.Run(() =>
 				{
-					Import(dir);
+					Do(Import, fileName, fileName.Replace(ExtXml, ExtExml));
+				}));
+
+				tasks.WaitAll(MaxParallelTasksCount);
+			}
+			else
+			{
+				foreach (var fileName in fileNames)
+				{
+					Do(Import, fileName, fileName.Replace(ExtXml, ExtExml));
 				}
 			}
 		}
@@ -149,6 +166,27 @@ namespace FFXV.Tools.XmbTool
 				Console.WriteLine($"{input}: {ex.Message}");
 				Console.ForegroundColor = prevColor;
 			}
+		}
+
+		private List<string> GetFilesList(List<string> list, string path, bool includeSubDirectories, Func<string, bool> expression)
+		{
+			foreach (var file in Directory.GetFiles(path))
+			{
+				if (expression(file))
+				{
+					list.Add(file);
+				}
+			}
+
+			if (includeSubDirectories)
+			{
+				foreach (var dir in Directory.GetDirectories(path))
+				{
+					GetFilesList(list, dir, includeSubDirectories, expression);
+				}
+			}
+
+			return list;
 		}
 	}
 }
