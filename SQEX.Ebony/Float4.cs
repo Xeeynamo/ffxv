@@ -6,6 +6,8 @@ namespace SQEX.Ebony
 	{
 		public float x, y, z, w;
 
+		public override string ToString() => $"{x},{y},{z},{w}";
+
 		public static Float4 FromString(string str)
 		{
 			var value = new Float4();
