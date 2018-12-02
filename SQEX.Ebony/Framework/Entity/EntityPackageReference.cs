@@ -2,7 +2,7 @@
 
 namespace SQEX.Ebony.Framework.Entity
 {
-	public class EntityPackage
+	public class EntityPackageReference
 	{
 		public string PresetFilePath { get; set; }
 
