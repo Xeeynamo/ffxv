@@ -46,7 +46,8 @@ namespace FFXV.Services
 			{
 				if (properties.TryGetValue(attribute.Name.ToString().ToLower(), out var property))
 				{
-					var value = Convert.ChangeType(attribute.Value, property.PropertyType);
+					var propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+					var value = Convert.ChangeType(attribute.Value, propertyType);
 					property.SetValue(item, value);
 				}
 			}
@@ -173,7 +174,7 @@ namespace FFXV.Services
 		static List<string> _assemblies = new List<string> { "SQEX.Ebony", "Black" };
 		static Dictionary<string, Type> _types = new Dictionary<string, Type>();
 
-		public static Type GetSafeType(string typeName, bool throwsException = true)
+		public static Type GetSafeType(string typeName, bool throwsException = false)
 		{
 			if (_types.TryGetValue(typeName, out var foundType))
 				return foundType;
