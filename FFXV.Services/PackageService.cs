@@ -15,6 +15,22 @@ namespace FFXV.Services
 			return Deserialize<Package>(element);
 		}
 
+		public static Dictionary<string, bool> GetSupportedTypes(Dictionary<string, bool> typesFound, XElement element)
+		{
+			var typeName = (string)element.Attribute("type");
+			if (typeName != null && !typesFound.ContainsKey(typeName))
+			{
+				typesFound.Add(typeName, GetSafeType(typeName, false) != null);
+			}
+
+			foreach (var childElement in element.Elements())
+			{
+				typesFound = GetSupportedTypes(typesFound, childElement);
+			}
+
+			return typesFound;
+		}
+
 		private static T Deserialize<T>(XElement element)
 		{
 			return (T)Deserialize(element, typeof(T));

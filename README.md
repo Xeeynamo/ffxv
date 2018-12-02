@@ -94,3 +94,9 @@ Convert all the exml files in the game folder to XML
 ```
 dotnet xmbtool -i ./ffxv-epduscae ./ffxv-epduscae-out -x -d -r
 ```
+
+### pkgvalidator
+
+This is a diagnostic tool for the reversed package structures.
+
+It scan recursively every XMB of its running folder and create a log of all the implemented and missing structures.
