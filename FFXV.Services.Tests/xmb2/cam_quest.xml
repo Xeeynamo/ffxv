@@ -1,0 +1,72 @@
+<package name="cam_quest">
+  <objects>
+    <object objectIndex="0" checked="True" type="Black.Entity.Camera.CameraPackage" path="" name="cam_quest">
+      <entities_>
+        <reference objectIndex="1" reference="True" object="entities_.cam_quest_warp" />
+        <reference objectIndex="2" reference="True" object="entities_.cam_quest_narrow_move_event" />
+        <reference objectIndex="3" reference="True" object="entities_.cam_quest_move_under_tree" />
+        <reference objectIndex="4" reference="True" object="entities_.cam_quest_shake" />
+      </entities_>
+      <hasTransform_ type="bool">False</hasTransform_>
+      <position_ type="float4">0,0,0,0</position_>
+      <rotation_ type="float4">0,0,0,0</rotation_>
+      <scaling_ type="float">1</scaling_>
+      <canManipulate_ type="bool">False</canManipulate_>
+      <sourcePath_ type="string">camera/master/3rd_person_camera/cam_quest.ebex</sourcePath_>
+      <name_ type="string">2e9a8bfb-0d8a-44ba-a78a-38e7c9933319</name_>
+      <isTemplateTraySourceReference_ type="bool">False</isTemplateTraySourceReference_>
+      <isShared_ type="bool">False</isShared_>
+      <startupLoad_ type="bool">True</startupLoad_>
+      <updateOrder_ type="enum">EPUO_DEFAULT</updateOrder_>
+    </object>
+    <object objectIndex="1" ownerPath="entities_" checked="True" type="SQEX.Ebony.Framework.Entity.EntityPackageReference" path="entities_.cam_quest_warp" name="cam_quest_warp" ownerIndex="0" owner="" original_type="Black.Entity.Camera.CameraPackage">
+      <hasTransform_ type="bool">False</hasTransform_>
+      <position_ type="float4">18944,0,14336,1</position_>
+      <rotation_ type="float4">0,0,0,0</rotation_>
+      <scaling_ type="float">1</scaling_>
+      <canManipulate_ type="bool">False</canManipulate_>
+      <sourcePath_ type="string">./cam_quest_warp.ebex</sourcePath_>
+      <name_ type="string">f1d74b59-ebcc-454e-9167-b2c11a2adba8</name_>
+      <isTemplateTraySourceReference_ type="bool">False</isTemplateTraySourceReference_>
+      <isShared_ type="bool">False</isShared_>
+      <startupLoad_ type="bool">True</startupLoad_>
+    </object>
+    <object objectIndex="2" ownerPath="entities_" checked="True" type="SQEX.Ebony.Framework.Entity.EntityPackageReference" path="entities_.cam_quest_narrow_move_event" name="cam_quest_narrow_move_event" ownerIndex="0" owner="" original_type="Black.Entity.Camera.CameraPackage">
+      <hasTransform_ type="bool">False</hasTransform_>
+      <position_ type="float4">0,0,0,0</position_>
+      <rotation_ type="float4">0,0,0,0</rotation_>
+      <scaling_ type="float">1</scaling_>
+      <canManipulate_ type="bool">False</canManipulate_>
+      <sourcePath_ type="string">./cam_quest_narrow_move_event.ebex</sourcePath_>
+      <name_ type="string">9246941a-2c23-4833-8a09-bd9595f84a41</name_>
+      <isTemplateTraySourceReference_ type="bool">False</isTemplateTraySourceReference_>
+      <isShared_ type="bool">False</isShared_>
+      <startupLoad_ type="bool">True</startupLoad_>
+    </object>
+    <object objectIndex="3" ownerPath="entities_" checked="True" type="SQEX.Ebony.Framework.Entity.EntityPackageReference" path="entities_.cam_quest_move_under_tree" name="cam_quest_move_under_tree" ownerIndex="0" owner="" original_type="Black.Entity.Camera.CameraPackage">
+      <hasTransform_ type="bool">False</hasTransform_>
+      <position_ type="float4">0,0,0,0</position_>
+      <rotation_ type="float4">0,0,0,0</rotation_>
+      <scaling_ type="float">1</scaling_>
+      <canManipulate_ type="bool">False</canManipulate_>
+      <sourcePath_ type="string">./cam_quest_move_under_tree.ebex</sourcePath_>
+      <name_ type="string">7a30e106-e9d2-4896-a601-cf5a08311ae9</name_>
+      <isTemplateTraySourceReference_ type="bool">False</isTemplateTraySourceReference_>
+      <isShared_ type="bool">False</isShared_>
+      <startupLoad_ type="bool">True</startupLoad_>
+      <updateOrder_ type="enum">EPUO_DEFAULT</updateOrder_>
+    </object>
+    <object objectIndex="4" ownerPath="entities_" checked="True" type="SQEX.Ebony.Framework.Entity.EntityPackageReference" path="entities_.cam_quest_shake" name="cam_quest_shake" ownerIndex="0" owner="" original_type="Black.Entity.Camera.CameraPackage">
+      <hasTransform_ type="bool">False</hasTransform_>
+      <position_ type="float4">0,0,0,0</position_>
+      <rotation_ type="float4">0,0,0,0</rotation_>
+      <scaling_ type="float">1</scaling_>
+      <canManipulate_ type="bool">False</canManipulate_>
+      <sourcePath_ type="string">./cam_quest_shake.ebex</sourcePath_>
+      <name_ type="string">c89ebc65-7183-465c-a92e-a108427ba9a8</name_>
+      <isTemplateTraySourceReference_ type="bool">False</isTemplateTraySourceReference_>
+      <isShared_ type="bool">False</isShared_>
+      <startupLoad_ type="bool">True</startupLoad_>
+    </object>
+  </objects>
+</package>

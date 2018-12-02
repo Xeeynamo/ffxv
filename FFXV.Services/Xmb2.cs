@@ -55,8 +55,8 @@ namespace FFXV.Services
 				{
 					ElementTableOffset = reader.ReadOffset(),
 					VariantTableOffset = reader.ReadOffset(),
-					ElementCount = reader.ReadByte(),
-					Unknown = reader.ReadInt16(),
+					ElementCount = reader.ReadInt16(),
+					Unknown = reader.ReadByte(),
 					AttributeCount = reader.ReadByte(),
 					Elements = new List<Element>(),
 					Attributes = new List<Attribute>()
