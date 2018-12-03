@@ -1,8 +1,9 @@
-﻿using SQEX.Ebony;
+using SQEX.Ebony;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 
 namespace FFXV.Services
@@ -38,6 +39,11 @@ namespace FFXV.Services
 
 		private static object Deserialize(XElement element, Type type)
 		{
+			if (DynamicAttribute.IsObjectDynamic(type))
+			{
+				return DeserializeObject(element.Elements(), type);
+			}
+
 			var item = Activator.CreateInstance(type);
 			var properties = type.GetProperties()
 				.ToDictionary(x => x.Name.ToLower(), x => x);
@@ -51,7 +57,7 @@ namespace FFXV.Services
 					property.SetValue(item, value);
 				}
 			}
-
+			
 			if (item is SQEX.Ebony.Object obj)
 			{
 				var childType = GetSafeType($"{obj.Type}");
@@ -110,8 +116,11 @@ namespace FFXV.Services
 		public static object DeserializeObject(IEnumerable<XElement> elements, Type type)
 		{
 			var item = Activator.CreateInstance(type);
-			var properties = type.GetProperties()
-				.ToDictionary(x => $"{x.Name.ToLower()}_", x => x);
+			var typeProperties = type.GetProperties();
+			var properties = typeProperties
+				.Select(x => new KeyValuePair<string, PropertyInfo>(x.Name.ToLower(), x))
+				.Concat(typeProperties.Select(x => new KeyValuePair<string, PropertyInfo>($"{x.Name.ToLower()}_", x)))
+				.ToDictionary(x => x.Key, x => x.Value);
 
 			foreach (var e in elements)
 			{
