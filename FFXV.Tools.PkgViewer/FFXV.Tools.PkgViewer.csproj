@@ -40,6 +40,7 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -90,6 +91,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Black\Black.csproj">
+      <Project>{ebd8b5c7-dc8c-45c5-aa4c-4916838df2f1}</Project>
+      <Name>Black</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FFXV.Models\FFXV.Models.csproj">
       <Project>{C359052B-2871-4C90-BD99-1E090C8EC1D4}</Project>
       <Name>FFXV.Models</Name>

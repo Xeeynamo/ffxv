@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using FFXV.Models;
 using FFXV.Services;
 using FFXV.Services.Extensions;
+using Path = System.IO.Path;
 
 namespace FFXV.Tools.PkgViewer
 {
@@ -44,9 +45,34 @@ namespace FFXV.Tools.PkgViewer
 
 		protected override void OnInitialized(EventArgs e)
 		{
-			//LoadXmb(@"ps4-duscae\app0-unpack\quest\cleigne\cl_qt007\cl_qt007.exml");
-			//LoadXmb(@"ps4-duscae\app0-unpack\character\nh\common\script\aigraph\nh_enemy_ai_000.exml");
+			//Load(@"D:\Hacking\FFXV\ps4-duscae\app0-unpack\quest\cleigne\cl_qt007\cl_qt007.exml");
+			Load(@"D:\Hacking\FFXV\ps4-duscae\app0-unpack\menu\map\travel_map\script\layout_travel_map.xml");
+			//Load(@"D:\Hacking\FFXV\ps4-duscae\app0-unpack\character\nh\common\script\aigraph\nh_enemy_ai_000.exml");
 			base.OnInitialized(e);
+		}
+
+		private void Load(string fileName)
+		{
+			switch (Path.GetExtension(fileName))
+			{
+				case ".exml":
+					LoadXmb(fileName);
+					break;
+				case ".xml":
+					LoadXml(fileName);
+					break;
+			}
+		}
+
+		private void LoadXml(string fileName)
+		{
+			XDocument doc;
+			using (var stream = File.Open(fileName, FileMode.Open))
+			{
+				doc = XDocument.Load(stream);
+			}
+
+			Open(doc);
 		}
 
 		private void LoadXmb(string fileName)
