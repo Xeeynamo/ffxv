@@ -6,7 +6,6 @@
 
 		public bool IsTemplateTraySourceReference { get; set; }
 
-		// TODO is this an enum??
 		public MenuPackageType MenuPackageType { get; set; }
 	}
 }
