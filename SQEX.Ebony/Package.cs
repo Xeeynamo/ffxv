@@ -6,6 +6,6 @@ namespace SQEX.Ebony
 	{
 		public string Name { get; set; }
 
-		public ICollection<Object> Objects { get; set; }
+		public List<Object> Objects { get; set; }
 	}
 }

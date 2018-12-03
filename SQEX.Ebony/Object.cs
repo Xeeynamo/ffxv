@@ -14,7 +14,7 @@
 
 		public string Owner { get; set; }
 
-		public int OwnerIndex { get; set; }
+		public int? OwnerIndex { get; set; }
 
 		public string OwnerPath { get; set; }
 
