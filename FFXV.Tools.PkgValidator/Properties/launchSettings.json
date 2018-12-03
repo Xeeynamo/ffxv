@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FFXV.Tools.PkgValidator": {
+      "commandName": "Project",
+      "workingDirectory": "D:\\Hacking\\FFXV\\ps4-duscae\\app0-unpack"
+    }
+  }
+}

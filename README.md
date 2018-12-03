@@ -100,3 +100,9 @@ dotnet xmbtool -i ./ffxv-epduscae ./ffxv-epduscae-out -x -d -r
 This is a diagnostic tool for the reversed package structures.
 
 It scan recursively every XMB of its running folder and create a log of all the implemented and missing structures.
+
+### pkgviewer
+
+Read EXML/XML files and show their struture node on a GUI application.
+
+The tool uses SQEX.Ebony and Black structures to parse and show XML information.
