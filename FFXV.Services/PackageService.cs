@@ -117,7 +117,8 @@ namespace FFXV.Services
 			{
 				if (properties.TryGetValue(e.Name.ToString().ToLower(), out var property))
 				{
-					bool isCollection = property.PropertyType.GenericTypeArguments.Length > 0;
+					var isNullable = property.PropertyType.Name.StartsWith("Nullable");
+					var isCollection = !isNullable && property.PropertyType.GenericTypeArguments.Length > 0;
 
 					if (isCollection)
 					{
@@ -150,6 +151,15 @@ namespace FFXV.Services
 			else if (type.IsEnum)
 			{
 				return DeserializeEnum(element, type);
+			}
+			else if (type.Name.StartsWith("Nullable"))
+			{
+				if (string.IsNullOrEmpty(element.Value))
+				{
+					return null;
+				}
+				
+				return Convert.ChangeType(element.Value, type.GenericTypeArguments[0]);
 			}
 			else
 			{
