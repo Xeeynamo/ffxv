@@ -27,13 +27,13 @@ namespace FFXV.Services.Tests
 			{
 				Assert.Equal(0, obj.ObjectIndex);
 				Assert.Equal("ocean", obj.Name);
-				Assert.Equal("SQEX.Ebony.Framework.Entity.EntityPackage", obj.Type);
+				Assert.Equal("SQEX.Ebony.Framework.Entity.EntityPackageReference", obj.Type);
 				Assert.Equal("", obj.Path);
 				Assert.True(obj.Checked);
 
 				Assert.NotNull(obj.Item);
-				Assert.IsType<SQEX.Ebony.Framework.Entity.EntityPackage>(obj.Item);
-				if (obj.Item is SQEX.Ebony.Framework.Entity.EntityPackage entityPackage)
+				Assert.IsType<SQEX.Ebony.Framework.Entity.EntityPackageReference>(obj.Item);
+				if (obj.Item is SQEX.Ebony.Framework.Entity.EntityPackageReference entityPackage)
 				{
 					Assert.Equal("environment/world/ebex/ocean.ebex", entityPackage.SourcePath);
 					Assert.Equal(0.0f, entityPackage.Position.x);

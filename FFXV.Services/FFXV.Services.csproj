@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Black\Black.csproj" />
+    <ProjectReference Include="..\FFXV.Models\FFXV.Models.csproj" />
     <ProjectReference Include="..\FFXV.Utilities\FFXV.Utilities.csproj" />
     <ProjectReference Include="..\SQEX.Ebony\SQEX.Ebony.csproj" />
   </ItemGroup>

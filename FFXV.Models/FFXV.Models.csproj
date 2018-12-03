@@ -4,4 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FFXV.Utilities\FFXV.Utilities.csproj" />
+    <ProjectReference Include="..\SQEX.Ebony\SQEX.Ebony.csproj" />
+  </ItemGroup>
+
 </Project>
