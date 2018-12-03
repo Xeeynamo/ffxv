@@ -1,20 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Black.Entity.Data.Menu;
-using SQEX.Ebony.Framework.Sequence;
+﻿using SQEX.Ebony.Framework.Sequence;
 
 namespace Black.Sequence.Variable
 {
-	public class SequenceVariableSwfEntity
+	public class SequenceVariableSwfEntity : SequenceVariableMenuEffectEntity
 	{
-		// TODO
-		public string RefInPorts { get; set; }
-
-		// TODO
-		public string RefOutPorts { get; set; }
-
-		public string Comment { get; set; }
-
 		public int PinNum { get; set; }
 
 		public SequenceContainerPin DynamicVarInputPin8 { get; set; }
@@ -82,13 +71,5 @@ namespace Black.Sequence.Variable
 		public string Prefix30 { get; set; }
 		public string Prefix31 { get; set; }
 		public string Prefix32 { get; set; }
-
-		public SequenceContainerPin OutValue { get; set; }
-
-		public string EntityPointer { get; set; }
-
-		public double PositionX { get; set; }
-
-		public double PositionY { get; set; }
 	}
 }

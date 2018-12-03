@@ -11,12 +11,13 @@ namespace Black.Sequence.Variable
 
 		public bool IsSetLabelSound { get; set; }
 
-		public ICollection<SwfTextFieldConfigArrayItem> TextFiledConfigList { get => null; set => throw new NotImplementedException(); }
+		// TODO
+		public ICollection<SwfTextFieldConfigArrayItem> TextFiledConfigList { get; set; }
 
-		public ICollection<object> LabelAccessoryList { get => null; set => throw new NotImplementedException(); }
+		public ICollection<SwfLabelAccessoryArrayItem> LabelAccessoryList { get; set; }
 
-		public ICollection<object> NameList { get => null; set => throw new NotImplementedException(); }
+		public ICollection<SwfStringArrayItem> NameList { get; set; }
 
-		public ICollection<object> FixidList { get => null; set => throw new NotImplementedException(); }
+		public ICollection<SwfFixidArrayItem> FixidList { get; set; }
 	}
 }

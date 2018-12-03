@@ -3,8 +3,8 @@
 namespace Black.Entity.Data.Menu
 {
 	[Dynamic]
-	public class SwfTextFieldConfigArrayItem
+	public class SwfStringArrayItem
 	{
-
+		public string Value { get; set; }
 	}
 }
