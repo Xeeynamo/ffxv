@@ -1,15 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 using FFXV.Models;
 using FFXV.Services;
 using FFXV.Services.Extensions;
+using FFXV.Tools.PkgViewer.Controls;
+using SQEX.Ebony;
 using Path = System.IO.Path;
 
 namespace FFXV.Tools.PkgViewer
@@ -24,7 +29,29 @@ namespace FFXV.Tools.PkgViewer
 
 		private static readonly Dictionary<Type, DependencyProperty> BindingProperties = new Dictionary<Type, DependencyProperty>
 		{
-			[typeof(TextBox)] = TextBox.TextProperty
+			[typeof(TextBox)] = TextBox.TextProperty,
+			[typeof(ComboBox)] = Selector.SelectedValueProperty
+		};
+
+		private static readonly List<Type> PrimitiveTypes = new List<Type>
+		{
+			typeof(bool),
+			typeof(sbyte),
+			typeof(byte),
+			typeof(char),
+			typeof(short),
+			typeof(ushort),
+			typeof(int),
+			typeof(uint),
+			typeof(long),
+			typeof(ulong),
+			typeof(string),
+			typeof(float),
+			typeof(double),
+			typeof(Float2),
+			typeof(Float3),
+			typeof(Float4),
+			typeof(Color),
 		};
 
 		public MainWindow()
@@ -45,9 +72,8 @@ namespace FFXV.Tools.PkgViewer
 
 		protected override void OnInitialized(EventArgs e)
 		{
-			//Load(@"D:\Hacking\FFXV\ps4-duscae\app0-unpack\quest\cleigne\cl_qt007\cl_qt007.exml");
-			Load(@"D:\Hacking\FFXV\ps4-duscae\app0-unpack\menu\map\travel_map\script\layout_travel_map.xml");
-			//Load(@"D:\Hacking\FFXV\ps4-duscae\app0-unpack\character\nh\common\script\aigraph\nh_enemy_ai_000.exml");
+			//Load(@"D:\Hacking\FFXV\ps4-duscae\app0-unpack\level\debugsystem\wm\debug_wm.xml");
+			Load(@"D:\Hacking\FFXV\ps4-duscae\app0-unpack\level\debugsystem\event\debug_event.xml");
 			base.OnInitialized(e);
 		}
 
@@ -150,7 +176,7 @@ namespace FFXV.Tools.PkgViewer
 			return treeViewItem;
 		}
 
-		private UIElement CreateUiElementGrid(PackageObject pkgObject)
+		private static UIElement CreateUiElementGrid(PackageObject pkgObject)
 		{
 			if (pkgObject.Item == null)
 				return null;
@@ -158,7 +184,7 @@ namespace FFXV.Tools.PkgViewer
 			return CreateUiElementGrid(pkgObject.Item);
 		}
 
-		private UIElement CreateUiElementGrid(object obj)
+		private static UIElement CreateUiElementGrid(object obj)
 		{
 			var grid = new Grid
 			{
@@ -184,7 +210,7 @@ namespace FFXV.Tools.PkgViewer
 			return grid;
 		}
 
-		private void AddUiElement(Grid grid, int index, object obj, PropertyInfo propertyInfo)
+		private static void AddUiElement(Grid grid, int index, object obj, PropertyInfo propertyInfo)
 		{
 			grid.RowDefinitions.Add(new RowDefinition
 			{
@@ -195,37 +221,113 @@ namespace FFXV.Tools.PkgViewer
 				Height = new GridLength(5, GridUnitType.Pixel)
 			});
 
-			var elementName = new TextBlock
+			var value = propertyInfo.GetValue(obj);
+
+			if (IsPrimitiveType(propertyInfo.PropertyType))
 			{
-				Text = propertyInfo.Name
-			};
+				var element = CreateUiElement(value);
+				BindProperty(element, propertyInfo.Name, obj);
+
+				AddUiFrameworkElement(grid, index, new TextBlock
+				{
+					Text = propertyInfo.Name
+				}, element);
+			}
+			else if (IsCollection(propertyInfo.PropertyType))
+			{
+				var element = CreateUiElementsArrayGroup(propertyInfo.Name, value);
+				BindProperty(element, propertyInfo.Name, obj);
+				AddUiFrameworkElement(grid, index, element);
+			}
+			else if (IsEnum(propertyInfo.PropertyType))
+			{
+				var element = CreateUiElementEnum(value);
+				BindProperty(element, propertyInfo.Name, obj);
+				AddUiFrameworkElement(grid, index, new TextBlock
+				{
+					Text = propertyInfo.Name
+				}, element);
+			}
+			else if (value != null) // Nullable types fall in this category
+			{
+				var element = CreateUiElementsGroup(propertyInfo.Name, value);
+				AddUiFrameworkElement(grid, index, element);
+			}
+		}
+
+		private static void BindProperty(FrameworkElement element, string name, object dataContext)
+		{
+			if (BindingProperties.TryGetValue(element.GetType(), out var dependencyProperty))
+			{
+				element.DataContext = dataContext;
+				element.SetBinding(dependencyProperty, new Binding(name)
+				{
+					UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+					Mode = BindingMode.TwoWay
+				});
+			}
+		}
+
+		private static void AddUiFrameworkElement(Grid grid, int index, FrameworkElement element)
+		{
+			grid.Children.Add(element);
+			Grid.SetColumn(element, 0);
+			Grid.SetColumnSpan(element, 3);
+			Grid.SetRow(element, index * 2);
+		}
+
+		private static void AddUiFrameworkElement(Grid grid, int index, FrameworkElement elementName, FrameworkElement elementValue)
+		{
 			grid.Children.Add(elementName);
 			Grid.SetColumn(elementName, FirstColumn);
 			Grid.SetRow(elementName, index * 2);
-
-			var elementValue = CreateUiElement(propertyInfo.GetValue(obj));
-			//if (BindingProperties.TryGetValue(elementValue.GetType(), out var dependencyProperty))
-			//{
-			//	elementValue.DataContext = obj;
-			//	elementValue.SetBinding(dependencyProperty, new Binding(propertyInfo.Name)
-			//	{
-			//		UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-			//		Mode = BindingMode.TwoWay
-			//	});
-			//}
 
 			grid.Children.Add(elementValue);
 			Grid.SetColumn(elementValue, SecondColumn);
 			Grid.SetRow(elementValue, index * 2);
 		}
 
+		private static bool IsPrimitiveType(Type type)
+		{
+			return PrimitiveTypes.Contains(type);
+		}
+
+		private static bool IsCollection(Type type)
+		{
+			return type.GetInterfaces()
+				.Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+		}
+
+		private static bool IsEnum(Type type)
+		{
+			return type.IsEnum;
+		}
+
 		private static FrameworkElement CreateUiElement(object value)
 		{
-			if (value is string str)
-				return CreateUiElementAs(value, str);
+			if (value is string ||
+			    value is int ||
+			    value is double ||
+			    value is float)
+				return CreateUiElementAs(value);
+
 			if (value is bool bval)
 				return CreateUiElementAs(value, bval);
+
 			return CreateUiElementAs(value, value);
+		}
+
+		private static FrameworkElement CreateUiElementEnum(object value)
+		{
+			var comboBox = new ComboBox();
+			var enumerator = value.GetType().GetEnumValues().GetEnumerator();
+
+			while (enumerator.MoveNext())
+			{
+				comboBox.Items.Add(enumerator.Current);
+			}
+
+			return comboBox;
 		}
 
 
@@ -237,12 +339,9 @@ namespace FFXV.Tools.PkgViewer
 			};
 		}
 
-		private static FrameworkElement CreateUiElementAs(object context, string value)
+		private static FrameworkElement CreateUiElementAs(object context)
 		{
-			return new TextBox
-			{
-				Text = value,
-			};
+			return new TextBox();
 		}
 
 		private static FrameworkElement CreateUiElementAs(object context, bool value)
@@ -250,6 +349,37 @@ namespace FFXV.Tools.PkgViewer
 			return new CheckBox
 			{
 				IsChecked = value,
+			};
+		}
+
+		private static FrameworkElement CreateUiElementsGroup(string name, object context)
+		{
+			return new SpecialGroupBox
+			{
+				Header = name,
+				Content = CreateUiElementGrid(context)
+			};
+		}
+
+		private static FrameworkElement CreateUiElementsArrayGroup(string name, object context)
+		{
+			var stackLayout = new StackPanel();
+			var index = 0;
+
+			foreach (var item in context as IEnumerable)
+			{
+				stackLayout.Children.Add(new SpecialGroupBox
+				{
+					Header = $"Item {index++}",
+					IsContentVisible = false,
+					Content = CreateUiElementGrid(item)
+				});
+			}
+
+			return new SpecialGroupBox
+			{
+				Header = name,
+				Content = stackLayout
 			};
 		}
 	}

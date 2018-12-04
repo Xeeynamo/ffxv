@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:FFXV.Tools.PkgViewer"
         mc:Ignorable="d"
         Title="FFXV Pkg Viewer" Height="450" Width="800">
-    <Grid Margin="10">
+    <Grid Margin="10 10 0 10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="10"/>
@@ -17,9 +17,11 @@
             <TreeView x:Name="PkgTree"/>
         </Grid>
 
-        <StackPanel x:Name="LayoutContent" Grid.Column="2">
+        <ScrollViewer Grid.Column="2">
+            <StackPanel x:Name="LayoutContent" Margin="0 0 10 0">
 
-        </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
 
     </Grid>
 </Window>
