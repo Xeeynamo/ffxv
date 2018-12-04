@@ -157,6 +157,10 @@ namespace FFXV.Services
 			{
 				return Float4.FromString(element.Value);
 			}
+			else if (type == typeof(Color))
+			{
+				return Color.FromString(element.Value);
+			}
 			else if (type.IsEnum)
 			{
 				return DeserializeEnum(element, type);
