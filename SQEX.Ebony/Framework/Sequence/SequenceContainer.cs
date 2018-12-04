@@ -39,16 +39,6 @@ namespace SQEX.Ebony.Framework.Sequence
 		public string PinValueType { get; set; }
 	}
 
-	public enum PinType
-	{
-		PT_ARBITRARY = 0
-	}
-
-	public enum DelayType
-	{
-		DT_TIME = 1
-	}
-
 	public class SequenceContainerOutPin : SequenceContainerPin
 	{
 		public DelayType DelayType { get; set; }
