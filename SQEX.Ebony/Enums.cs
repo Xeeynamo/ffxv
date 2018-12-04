@@ -19,4 +19,12 @@
 	{
 		ET_STRING = 3
 	}
+
+	public enum SequenceVariableType
+	{
+		SVT_BOOL = 0,
+		SVT_INT = 1,
+		SVT_FLOAT = 2,
+		SVT_VECTOR = 3
+	}
 }

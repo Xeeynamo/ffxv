@@ -1,22 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SQEX.Ebony.Framework.Node;
-
-namespace SQEX.Ebony.Framework.Sequence.Event
+﻿namespace SQEX.Ebony.Framework.Sequence.Event
 {
-	public class SequenceEventKeyboardInput
+	public class SequenceEventKeyboardInput : SequenceNode
 	{
-		public ICollection<GraphVariableInputPin> RefInPorts { get; set; }
-
-		public ICollection<GraphVariableOutputPin> RefOutPorts { get; set; }
-
-		public string Comment { get; set; }
-
-		public ICollection<GraphTriggerInputPin> TriInPorts { get; set; }
-
-		public ICollection<GraphTriggerOutputPin> TriOutPorts { get; set; }
-
 		public SequenceContainerOutPin Enable { get; set; }
 
 		public SequenceContainerOutPin Disable { get; set; }
@@ -34,9 +19,5 @@ namespace SQEX.Ebony.Framework.Sequence.Event
 		public bool BIsNeedAltPress { get; set; }
 
 		public string InputKey { get; set; }
-
-		public double PositionX { get; set; }
-
-		public double PositionY { get; set; }
 	}
 }

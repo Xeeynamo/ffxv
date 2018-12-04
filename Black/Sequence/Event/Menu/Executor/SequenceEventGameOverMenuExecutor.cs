@@ -2,22 +2,8 @@
 
 namespace Black.Sequence.Event.Menu.Executor
 {
-	public class SequenceEventGameOverMenuExecutor
+	public class SequenceEventGameOverMenuExecutor : SequenceNode
 	{
-		// TODO
-		public string RefInPorts { get; set; }
-
-		// TODO
-		public string RefOutPorts { get; set; }
-
-		public string Comment { get; set; }
-
-		// TODO
-		public string TriInPorts { get; set; }
-
-		// TODO
-		public string TriOutPorts { get; set; }
-
 		public SequenceContainerOutPin OutPin { get; set; }
 
 		public SequenceContainerPin Pin0 { get; set; }
@@ -28,9 +14,5 @@ namespace Black.Sequence.Event.Menu.Executor
 		public SequenceContainerPin Pin5 { get; set; }
 		public SequenceContainerPin Pin6 { get; set; }
 		public SequenceContainerPin Pin7 { get; set; }
-
-		public double PositionX { get; set; }
-
-		public double PositionY { get; set; }
 	}
 }

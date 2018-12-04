@@ -1,21 +1,12 @@
 ﻿using System.Collections.Generic;
 using SQEX.Ebony;
 using SQEX.Ebony.Framework.Node;
+using SQEX.Ebony.Framework.Sequence;
 
 namespace Black.Sequence.Event
 {
-	public class SequenceRequestEvent2
+	public class SequenceRequestEvent2 : SequenceNode
 	{
-		public ICollection<GraphVariableInputPin> RefInPorts { get; set; }
-
-		public ICollection<GraphVariableOutputPin> RefOutPorts { get; set; }
-
-		public string Comment { get; set; }
-
-		public ICollection<GraphTriggerInputPin> TriInPorts { get; set; }
-
-		public ICollection<GraphTriggerOutputPin> TriOutPorts { get; set; }
-
 		public GraphTriggerInputPin In { get; set; }
 
 		public GraphTriggerOutputPin Out { get; set; }
@@ -33,9 +24,5 @@ namespace Black.Sequence.Event
 		public GraphVariableInputPin HandlerActor { get; set; }
 
 		public bool PrintLog { get; set; }
-
-		public double PositionX { get; set; }
-
-		public double PositionY { get; set; }
 	}
 }

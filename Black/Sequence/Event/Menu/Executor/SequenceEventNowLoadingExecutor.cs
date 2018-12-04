@@ -2,22 +2,8 @@
 
 namespace Black.Sequence.Event.Menu.Executor
 {
-	public class SequenceEventNowLoadingExecutor
+	public class SequenceEventNowLoadingExecutor : SequenceNode
 	{
-		// TODO
-		public string RefInPorts { get; set; }
-
-		// TODO
-		public string RefOutPorts { get; set; }
-
-		public string Comment { get; set; }
-
-		// TODO
-		public string TriInPorts { get; set; }
-
-		// TODO
-		public string TriOutPorts { get; set; }
-
 		public SequenceContainerOutPin OutPin { get; set; }
 
 		public SequenceContainerPin Pin0 { get; set; }
@@ -39,9 +25,5 @@ namespace Black.Sequence.Event.Menu.Executor
 		public string BodyMsgId { get; set; }
 
 		public int MaxloadedMegaByte { get; set; }
-
-		public double PositionX { get; set; }
-
-		public double PositionY { get; set; }
 	}
 }
