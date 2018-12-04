@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -223,35 +223,42 @@ namespace FFXV.Tools.PkgViewer
 
 			var value = propertyInfo.GetValue(obj);
 
-			if (IsPrimitiveType(propertyInfo.PropertyType))
+			if (value != null)
 			{
-				var element = CreateUiElement(value);
-				BindProperty(element, propertyInfo.Name, obj);
+				if (IsPrimitiveType(propertyInfo.PropertyType))
+				{
+					var element = CreateUiElement(value);
+					BindProperty(element, propertyInfo.Name, obj);
 
-				AddUiFrameworkElement(grid, index, new TextBlock
+					AddUiFrameworkElement(grid, index, new TextBlock
+					{
+						Text = propertyInfo.Name
+					}, element);
+				}
+				else if (IsCollection(propertyInfo.PropertyType))
 				{
-					Text = propertyInfo.Name
-				}, element);
-			}
-			else if (IsCollection(propertyInfo.PropertyType))
-			{
-				var element = CreateUiElementsArrayGroup(propertyInfo.Name, value);
-				BindProperty(element, propertyInfo.Name, obj);
-				AddUiFrameworkElement(grid, index, element);
-			}
-			else if (IsEnum(propertyInfo.PropertyType))
-			{
-				var element = CreateUiElementEnum(value);
-				BindProperty(element, propertyInfo.Name, obj);
-				AddUiFrameworkElement(grid, index, new TextBlock
+					var element = CreateUiElementsArrayGroup(propertyInfo.Name, value);
+					BindProperty(element, propertyInfo.Name, obj);
+					AddUiFrameworkElement(grid, index, element);
+				}
+				else if (IsEnum(propertyInfo.PropertyType))
 				{
-					Text = propertyInfo.Name
-				}, element);
+					var element = CreateUiElementEnum(value);
+					BindProperty(element, propertyInfo.Name, obj);
+					AddUiFrameworkElement(grid, index, new TextBlock
+					{
+						Text = propertyInfo.Name
+					}, element);
+				}
+				else
+				{
+					var element = CreateUiElementsGroup(propertyInfo.Name, value);
+					AddUiFrameworkElement(grid, index, element);
+				}
 			}
-			else if (value != null) // Nullable types fall in this category
+			else
 			{
-				var element = CreateUiElementsGroup(propertyInfo.Name, value);
-				AddUiFrameworkElement(grid, index, element);
+				// Null values should be handled in some way.
 			}
 		}
 
