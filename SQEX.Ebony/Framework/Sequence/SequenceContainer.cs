@@ -8,8 +8,7 @@ namespace SQEX.Ebony.Framework.Sequence
 
 		public ICollection<EntityReference> Nodes { get; set; }
 
-		// TODO
-		public string Groups { get; set; }
+		public ICollection<EntityReference> Groups { get; set; }
 
 		public ICollection<EntityReference> SelectedNodes { get; set; }
 
