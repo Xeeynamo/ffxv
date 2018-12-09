@@ -1,4 +1,4 @@
-﻿using FFXV.Utilities;
+using FFXV.Utilities;
 using SQEX.Ebony;
 using System;
 using System.Collections.Generic;
@@ -173,6 +173,7 @@ namespace FFXV.Services
 			"name",
 			"objectIndex",
 			"type",
+			"value",
 			"path",
 			"checked",
 			"reference",
@@ -181,6 +182,9 @@ namespace FFXV.Services
 			"owner",
 			"ownerIndex",
 			"ownerPath",
+			"fixid",
+			"relativePath",
+			"dynamic",
 		}.ToDictionary(x => hash.GetDigest(x), x => x);
 
 		private Element rootElement;
