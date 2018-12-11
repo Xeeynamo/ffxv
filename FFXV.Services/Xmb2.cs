@@ -185,6 +185,16 @@ namespace FFXV.Services
 			"fixid",
 			"relativePath",
 			"dynamic",
+			"connectorIndex",
+			"connectorRelativePath",
+			"connectorObject",
+			"connectorObjectIndex",
+			"PrefabOwnerPackageSource",
+			"PrefabConnectionSourceItemPath",
+			"ProxyConnectionOwnerPackageName",
+			"UseTemplateConnection",
+			"UnresolvedPointerPackageSource",
+			"UseUnresolvedPointerReference",
 		}.ToDictionary(x => hash.GetDigest(x), x => x);
 
 		private Element rootElement;
