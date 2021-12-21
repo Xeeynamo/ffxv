@@ -1,5 +1,7 @@
 # Reverse engineering of Final Fantasy XV (PC, PS4, Xbox One)
 
+Please refer to the [research document](docs/index.md) to know more about Final Fantasy XV internals and other minor findings.
+
 ## How to contribute
 
 ### Package models
@@ -15,7 +17,7 @@ Not all the packages have all the types mapped. Creating a model is straight for
 7) Run the test and be 100% sure that it passes.
 8) Create a pull request :)
 
-### Tools
+### Tools development
 
 The following tools are missing:
 
@@ -27,6 +29,7 @@ The following tools are missing:
 ## Format supported
 
 ### Package
+
 The main boss of the game. Every EXML/XMB/XMB2 can be converted to an XML, which the Luminous Engine reads that as 'package'.
 
 A package is a descriptor that drives almost all the aspects of the game. On FFXV.Services there is a PackageService which de-serialize an XML and returns a Package object.
@@ -38,19 +41,23 @@ Every object has a type, which is used by PackageService by just creating its mo
 Since the complexity of the PackageService deserializer, there are some tests to validate the way which it behaves.
 
 ### XMB
+
 XMB is used by Final Fantasy XV Episode Duscae and Platinum Demo and can be modified using [xmbtool](#xmbtool).
 
 [The full documentation is available here.](https://www.lucianociccariello.com/research/finalfantasyxv#xmb)
 
 ### XMB2
+
 XMB2 is used by the final version of Final Fantasy XV and the Judgment Demo.
 It has not been reversed yet.
 
 ### EARC
+
 A file archive format that it is responsable to link other dependent EARC files.
 Not the best implementation here, but it works. I recommend to use FFXV Scout or Noesis.
 
 ### BTEX
+
 PC/PS4 texture format. Not completed at all. Everything is currently commented.
 
 ## Tools
@@ -63,7 +70,7 @@ All the graphical tools requires [.NET Framework runtime](https://www.microsoft.
 
 Converts between XMB and XML.
 
-**Parameters**
+#### Parameters
 
 `-i|--input` Input file or directory.
 
@@ -75,23 +82,23 @@ Converts between XMB and XML.
 
 `-r|--recursive` Recursively process all the files from the input directory to the output directory.
 
-**Examples**
+#### Examples
 
 Convert a XMB file to XML:
 
-```
+```shell
 dotnet xmbtool -i layout_title_epd.exml -o layout_title_epd.xml -x
 ```
 
 Convert a XML back to XMB:
 
-```
+```shell
 dotnet xmbtool -i layout_title_epd.exml -o layout_title_epd.xml
 ```
 
 Convert all the exml files in the game folder to XML
 
-```
+```shell
 dotnet xmbtool -i ./ffxv-epduscae ./ffxv-epduscae-out -x -d -r
 ```
 
